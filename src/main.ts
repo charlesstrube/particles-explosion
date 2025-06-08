@@ -1,4 +1,3 @@
-
 import { Engine } from './Engine'
 import './style.css'
 
@@ -88,8 +87,9 @@ if (app) {
         context.fillRect(0, 0, canvas.width, canvas.height)
         context.restore()
         engine.particles.forEach((particle) => {
-          context.fillStyle = 'white'
-          context.fillRect(particle.position.x, particle.position.y, 4, 4)
+          const alpha = 1 - particle.lifeTimePercentage();
+          context.fillStyle = `rgba(255, 255, 255, ${alpha})`
+          context.fillRect(particle.position.x, particle.position.y, 2, 2)
           context.restore()
         })
       }

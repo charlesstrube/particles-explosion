@@ -36,7 +36,6 @@ export class Particle {
       }
     }
 
-    
     return {
       x: 0,
       y: 0,
@@ -58,6 +57,10 @@ export class Particle {
 
   isAlive() {
     return this.lifetime < this.maxLifetime;
+  }
+
+  lifeTimePercentage() {
+    return this.lifetime / this.maxLifetime;
   }
 
   // Method to set velocity
