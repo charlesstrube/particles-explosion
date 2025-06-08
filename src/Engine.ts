@@ -3,9 +3,9 @@ import type { Position } from "./types"
 
 export class Engine {
 
-  readonly particles: Particle[] = []
+  public particles: Particle[] = []
 
-  constructor(public width: number, public height: number, private fps: number) {}
+  constructor(public width: number, public height: number) {}
 
   spawnParticles(position: Position, amount: number) {
     for (let i = 0; i < amount; i++) {
@@ -13,11 +13,11 @@ export class Engine {
     }
   }
 
-  update() {
-    this.particles.forEach(particle => {
-      particle.update(1 / this.fps)
+  update(deltaTime: number) {
+    this.particles.forEach((particle, index) => {
+      particle.update(deltaTime)
       if (!particle.isAlive()) {
-        this.particles.splice(this.particles.indexOf(particle), 1);
+        this.particles.splice(index, 1)
       }
     })
   }

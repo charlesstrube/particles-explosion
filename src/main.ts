@@ -6,8 +6,7 @@ const app = document.querySelector<HTMLDivElement>('#app')
 
 const WIDTH = 1000
 const HEIGHT = 1000
-const CELL_SIZE = 10
-const FPS = 120
+const FPS = 60
 
 
 
@@ -55,7 +54,7 @@ if (app) {
   if (context) {
     context.scale(ratio, ratio)
 
-    const engine = new Engine(WIDTH, HEIGHT, FPS)
+    const engine = new Engine(WIDTH, HEIGHT)
 
     const loop = () => {
 
@@ -75,27 +74,26 @@ if (app) {
 
         // Put your drawing code here
 
-        engine.update()
+        engine.update(elapsed)
 
 
 
         if (holding && !hasSpawned && x !== undefined && y !== undefined) {
-          engine.spawnParticles({ x, y, z: 0 }, 200)
+          engine.spawnParticles({ x, y, z: 0 }, 2)
           hasSpawned = true
         }
 
 
         context.clearRect(0, 0, canvas.width, canvas.height)
         context.fillStyle = 'black'
-        context.fillRect(0, 0, CELL_SIZE * WIDTH, CELL_SIZE * HEIGHT)
+        context.fillRect(0, 0, canvas.width, canvas.height)
         context.restore()
-        engine.particles.forEach(particle => {
+        engine.particles.forEach((particle) => {
           context.fillStyle = 'white'
-          context.fillRect(particle.position.x, particle.position.y, 1, 1)
+          context.fillRect(particle.position.x, particle.position.y, 4, 4)
           context.restore()
         })
       }
-
     }
 
     loop();
