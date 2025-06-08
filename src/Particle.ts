@@ -13,26 +13,34 @@ export class Particle {
     z: number,
   ) {
     this.position = { x, y, z };
-    const force = 100; // Force constante
-    this.velocity = {
-      x: (Math.random() - 0.5) * 2,
-      y: (Math.random() - 0.5) * 2,
-      z: (Math.random() - 0.5) * 2
-    };
-    this.normalizeVelocity(force);
+    const force = 100;
+
+    this.velocity = this.normalizeVelocity(force);
   }
 
   private normalizeVelocity(force: number) {
+    const x = (Math.random() - 0.5) * 2
+    const y = (Math.random() - 0.5) * 2
+    const z = (Math.random() - 0.5) * 2
     const magnitude = Math.sqrt(
-      this.velocity.x * this.velocity.x +
-      this.velocity.y * this.velocity.y +
-      this.velocity.z * this.velocity.z
+      Math.pow(x, 2) +
+      Math.pow(y, 2) +
+      Math.pow(z, 2)
     );
-    
+
     if (magnitude !== 0) {
-      this.velocity.x = (this.velocity.x / magnitude) * force;
-      this.velocity.y = (this.velocity.y / magnitude) * force;
-      this.velocity.z = (this.velocity.z / magnitude) * force;
+      return {
+        x: (x / magnitude) * force,
+        y: (y / magnitude) * force,
+        z: (z / magnitude) * force
+      }
+    }
+
+    
+    return {
+      x: 0,
+      y: 0,
+      z: 0
     }
   }
 

@@ -4,11 +4,10 @@ import './style.css'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 
-const WIDTH = 1000
-const HEIGHT = 1000
+const WIDTH = 500
+const HEIGHT = 500
 const FPS = 30
 const AMOUNT = 200
-
 
 if (app) {
   const canvas = document.createElement('canvas')
