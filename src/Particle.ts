@@ -4,25 +4,31 @@ export class Particle {
 
   private lifetime: number = 0;
   private maxLifetime: number = 1000;
+  private velocity: Velocity;
+  readonly position: Position;
 
   constructor(
-    public position: Position,
-    private velocity: Velocity = { 
-      x: (Math.random() - 0.5) * 10, 
-      y: (Math.random() - 0.5) * 10, 
-      z: (Math.random() - 0.5) * 10
-    }
+    x: number,
+    y: number,
+    z: number,
   ) {
-    console.log('velocity', velocity)
-    this.position = position;
-    this.velocity = velocity;
+    this.position = { x, y, z };
+    this.velocity = {
+      x: (Math.random() - 0.5) * 100,
+      y: (Math.random() - 0.5) * 100,
+      z: (Math.random() - 0.5) * 100
+    };
+  }
+
+  getPosition() {
+    return this.position;
   }
 
   // Method to update position based on velocity
   update(deltaTime: number) {
-    this.position.x += this.velocity.x * deltaTime / 1000;
-    this.position.y += this.velocity.y * deltaTime / 1000;
-    this.position.z += this.velocity.z * deltaTime / 1000;
+    this.position.x += this.velocity.x * (deltaTime / 1000);
+    this.position.y += this.velocity.y * (deltaTime / 1000);
+    this.position.z += this.velocity.z * (deltaTime / 1000);
     this.lifetime += deltaTime;
   }
 

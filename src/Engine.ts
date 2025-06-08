@@ -1,5 +1,4 @@
 import { Particle } from "./Particle"
-import type { Position } from "./types"
 
 export class Engine {
 
@@ -7,18 +6,16 @@ export class Engine {
 
   constructor(public width: number, public height: number) {}
 
-  spawnParticles(position: Position, amount: number) {
+  spawnParticles(x: number, y: number, z: number, amount: number) {
     for (let i = 0; i < amount; i++) {
-      this.particles.push(new Particle(position))
+      this.particles.push(new Particle(x, y, z))
     }
   }
 
   update(deltaTime: number) {
-    this.particles.forEach((particle, index) => {
+    this.particles = this.particles.filter((particle) => {
       particle.update(deltaTime)
-      if (!particle.isAlive()) {
-        this.particles.splice(index, 1)
-      }
+      return particle.isAlive()
     })
   }
 }

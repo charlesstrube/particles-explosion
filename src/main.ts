@@ -6,8 +6,8 @@ const app = document.querySelector<HTMLDivElement>('#app')
 
 const WIDTH = 1000
 const HEIGHT = 1000
-const FPS = 60
-
+const FPS = 30
+const AMOUNT = 200
 
 
 if (app) {
@@ -79,7 +79,7 @@ if (app) {
 
 
         if (holding && !hasSpawned && x !== undefined && y !== undefined) {
-          engine.spawnParticles({ x, y, z: 0 }, 2)
+          engine.spawnParticles(x, y, 0, AMOUNT)
           hasSpawned = true
         }
 
