@@ -92,18 +92,21 @@ if (app) {
 
         sortedParticles.forEach((particle) => {
           const alpha = 1 - particle.lifeTimePercentage();
-          const perspective = 1000; // Distance de la caméra
+          const perspective = 300; // Distance de la caméra
           const scale = perspective / (perspective + particle.position.z);
-          
+
           // Calculer la position projetée
-          const projectedX = (particle.position.x - WIDTH/2) * scale + WIDTH/2;
-          const projectedY = (particle.position.y - HEIGHT/2) * scale + HEIGHT/2;
-          
+          const projectedX = (particle.position.x - WIDTH / 2) * scale + WIDTH / 2;
+          const projectedY = (particle.position.y - HEIGHT / 2) * scale + HEIGHT / 2;
+
           // Taille de la particule qui varie avec la profondeur
-          const size = 2 * scale;
-          
+          const size = 5 * scale;
+
+          context.beginPath();
+          context.roundRect(projectedX, projectedY, size, size, 10);
           context.fillStyle = `rgba(255, 255, 255, ${alpha})`
-          context.fillRect(projectedX, projectedY, size, size)
+          context.fill();
+
           context.restore()
         })
       }
