@@ -5,8 +5,8 @@ const app = document.querySelector<HTMLDivElement>('#app')
 
 const WIDTH = 500
 const HEIGHT = 500
-const FPS = 30
-const AMOUNT = 200
+const FPS = 60
+const AMOUNT = 300
 
 if (app) {
   const canvas = document.createElement('canvas')
@@ -86,10 +86,24 @@ if (app) {
         context.fillStyle = 'black'
         context.fillRect(0, 0, canvas.width, canvas.height)
         context.restore()
-        engine.particles.forEach((particle) => {
+
+        // Trier les particules par Z pour un rendu correct de la profondeur
+        const sortedParticles = [...engine.particles].sort((a, b) => b.position.z - a.position.z);
+
+        sortedParticles.forEach((particle) => {
           const alpha = 1 - particle.lifeTimePercentage();
+          const perspective = 1000; // Distance de la caméra
+          const scale = perspective / (perspective + particle.position.z);
+          
+          // Calculer la position projetée
+          const projectedX = (particle.position.x - WIDTH/2) * scale + WIDTH/2;
+          const projectedY = (particle.position.y - HEIGHT/2) * scale + HEIGHT/2;
+          
+          // Taille de la particule qui varie avec la profondeur
+          const size = 2 * scale;
+          
           context.fillStyle = `rgba(255, 255, 255, ${alpha})`
-          context.fillRect(particle.position.x, particle.position.y, 2, 2)
+          context.fillRect(projectedX, projectedY, size, size)
           context.restore()
         })
       }
