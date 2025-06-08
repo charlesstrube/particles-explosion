@@ -3,8 +3,8 @@ import './style.css'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 
-const WIDTH = 500
-const HEIGHT = 500
+const WIDTH = 800
+const HEIGHT = 450
 const FPS = 60
 const AMOUNT = 300
 
@@ -92,7 +92,7 @@ if (app) {
 
         sortedParticles.forEach((particle) => {
           const alpha = 1 - particle.lifeTimePercentage();
-          const perspective = 300; // Distance de la caméra
+          const perspective = 200; // Distance de la caméra
           const scale = perspective / (perspective + particle.position.z);
 
           // Calculer la position projetée
@@ -102,9 +102,10 @@ if (app) {
           // Taille de la particule qui varie avec la profondeur
           const size = 5 * scale;
 
+
           context.beginPath();
           context.roundRect(projectedX, projectedY, size, size, 10);
-          context.fillStyle = `rgba(255, 255, 255, ${alpha})`
+          context.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${alpha})`
           context.fill();
 
           context.restore()

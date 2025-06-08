@@ -15,3 +15,9 @@ export interface Turbulence  {
   y: number;
   z: number;
 }
+
+export interface Color {
+  r: number;
+  g: number;
+  b: number;
+}

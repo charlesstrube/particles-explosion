@@ -1,5 +1,12 @@
-import type { Position, Velocity, Turbulence } from "./types";
+import type { Position, Velocity, Turbulence, Color } from "./types";
 
+const redVariants = [
+  { r: 255, g: 0, b: 0 },      // Rouge vif
+  { r: 255, g: 50, b: 50 },    // Rouge clair
+  { r: 200, g: 0, b: 0 },      // Rouge foncé
+  { r: 255, g: 100, b: 100 },  // Rouge pâle
+  { r: 180, g: 0, b: 0 }       // Rouge bordeaux
+];
 export class Particle {
 
   private lifetime: number = 0;
@@ -11,6 +18,7 @@ export class Particle {
   private turbulenceFrequency: number;
   private turbulencePhase: number;
   private airResistance: number = 0.0001; // Coefficient de résistance de l'air
+  readonly color: Color;
 
   constructor(
     x: number,
@@ -18,15 +26,23 @@ export class Particle {
     z: number,
   ) {
     this.position = { x, y, z };
-    const force = 100;
+    const force = 200;
 
     this.velocity = this.normalizeVelocity(force);
     this.turbulence = { x: 0, y: 0, z: 0 };
     
     // Paramètres de turbulence aléatoires pour chaque particule
-    this.turbulenceStrength = 5 + Math.random() * 3; // Entre 5 et 15
-    this.turbulenceFrequency = 0.5 + Math.random() * .5; // Entre 0.5 et 2
-    this.turbulencePhase = Math.random() * Math.PI * 2; // Phase aléatoire entre 0 et 2π
+    this.turbulenceStrength = 5 + Math.random() * .1;
+    this.turbulenceFrequency = 0.5 + Math.random() * .5;
+    this.turbulencePhase = Math.random() * Math.PI * 1;
+
+    // 30% de chance d'être rouge avec différentes nuances
+    if (Math.random() < 0.3) {
+
+      this.color = redVariants[Math.floor(Math.random() * redVariants.length)];
+    } else {
+      this.color = { r: 255, g: 255, b: 255 };
+    }
   }
 
   private normalizeVelocity(force: number) {
