@@ -10,6 +10,7 @@ export class Particle {
   private turbulenceStrength: number;
   private turbulenceFrequency: number;
   private turbulencePhase: number;
+  private airResistance: number = 0.0001; // Coefficient de résistance de l'air
 
   constructor(
     x: number,
@@ -23,8 +24,8 @@ export class Particle {
     this.turbulence = { x: 0, y: 0, z: 0 };
     
     // Paramètres de turbulence aléatoires pour chaque particule
-    this.turbulenceStrength = 5 + Math.random() * 10; // Entre 5 et 15
-    this.turbulenceFrequency = 0.5 + Math.random() * 1.5; // Entre 0.5 et 2
+    this.turbulenceStrength = 5 + Math.random() * 3; // Entre 5 et 15
+    this.turbulenceFrequency = 0.5 + Math.random() * .5; // Entre 0.5 et 2
     this.turbulencePhase = Math.random() * Math.PI * 2; // Phase aléatoire entre 0 et 2π
   }
 
@@ -69,6 +70,30 @@ export class Particle {
     };
   }
 
+  private getVelocityMagnitude(): number {
+    return Math.sqrt(
+      this.velocity.x * this.velocity.x +
+      this.velocity.y * this.velocity.y +
+      this.velocity.z * this.velocity.z
+    );
+  }
+
+  private applyAirResistance(deltaTime: number) {
+    const speed = this.getVelocityMagnitude();
+    if (speed === 0) return;
+
+    // Calcul de la force de résistance (proportionnelle au carré de la vitesse)
+    const dragForce = this.airResistance * speed * speed;
+    
+    // Calcul du facteur de réduction
+    const reductionFactor = 1 - (dragForce * deltaTime / 1000);
+    
+    // Application de la résistance
+    this.velocity.x *= reductionFactor;
+    this.velocity.y *= reductionFactor;
+    this.velocity.z *= reductionFactor;
+  }
+
   // Method to update position based on velocity
   update(deltaTime: number) {
     this.updateTurbulence();
@@ -77,6 +102,9 @@ export class Particle {
     this.velocity.x += this.turbulence.x;
     this.velocity.y += this.turbulence.y;
     this.velocity.z += this.turbulence.z;
+
+    // Appliquer la résistance de l'air
+    this.applyAirResistance(deltaTime);
 
     // Mettre à jour la position
     this.position.x += this.velocity.x * (deltaTime / 1000);
