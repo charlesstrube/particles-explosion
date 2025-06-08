@@ -5,10 +5,9 @@ const app = document.querySelector<HTMLDivElement>('#app')
 
 const WIDTH = window.innerWidth
 const HEIGHT = window.innerHeight
-const FPS = 25
-const AMOUNT = 500
+const FPS = 60
+const AMOUNT = 1000
 const PERSPECTIVE = 400
-const PARTICLE_SIZE = 5
 
 if (app) {
   const canvas = document.createElement('canvas')
@@ -101,15 +100,40 @@ if (app) {
           const projectedY = (particle.position.y - HEIGHT / 2) * scale + HEIGHT / 2;
 
           // Taille de la particule qui varie avec la profondeur
-          const size = PARTICLE_SIZE * scale;
+          const baseSize = 3;
+          const zFactor = Math.max(0, -particle.position.z / PERSPECTIVE);
+          const size = baseSize * (1 + zFactor * 0.2) * scale;
 
+          if (particle.position.z < 0) {
+            // Dessiner un hexagone pour les particules proches de la caméra
+            context.beginPath();
+            const sides = 6;
+            const angle = (Math.PI * 2) / sides;
+            
+            for (let i = 0; i < sides; i++) {
+              const x = projectedX + size * Math.cos(angle * i);
+              const y = projectedY + size * Math.sin(angle * i);
+              if (i === 0) {
+                context.moveTo(x, y);
+              } else {
+                context.lineTo(x, y);
+              }
+            }
+            context.closePath();
 
-          context.beginPath();
-          context.roundRect(projectedX, projectedY, size, size, 10);
-          context.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${alpha})`
+            // Ajuster l'alpha en fonction de la profondeur pour les particules proches
+            const depthAlpha = Math.max(0.2, 0.8 - zFactor * 0.6);
+            const finalAlpha = alpha * depthAlpha;
+            context.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${finalAlpha})`;
+          } else {
+            // Dessiner un cercle pour les particules éloignées
+            context.beginPath();
+            context.arc(projectedX, projectedY, size, 0, Math.PI * 2);
+            context.closePath();
+            context.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${alpha})`;
+          }
           context.fill();
-
-          context.restore()
+          context.restore();
         })
       }
     }
