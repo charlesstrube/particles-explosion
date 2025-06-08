@@ -10,14 +10,14 @@ const redVariants = [
 export class Particle {
 
   private lifetime: number = 0;
-  private maxLifetime: number = 3000;
+  private maxLifetime: number = 4000;
   private velocity: Velocity;
   readonly position: Position;
   private turbulence: Turbulence;
   private turbulenceStrength: number;
   private turbulenceFrequency: number;
   private turbulencePhase: number;
-  private airResistance: number = 0.0001; // Coefficient de résistance de l'air
+  private airResistance: number = 0.00008; // Coefficient de résistance de l'air
   readonly color: Color;
 
   constructor(
@@ -30,6 +30,9 @@ export class Particle {
 
     this.velocity = this.normalizeVelocity(force);
     this.turbulence = { x: 0, y: 0, z: 0 };
+
+    this.maxLifetime = 4000 + (Math.random() -.5) * 2000;
+    console.log(this.maxLifetime)
     
     // Paramètres de turbulence aléatoires pour chaque particule
     this.turbulenceStrength = 5 + Math.random() * .1;

@@ -5,9 +5,9 @@ const app = document.querySelector<HTMLDivElement>('#app')
 
 const WIDTH = window.innerWidth
 const HEIGHT = window.innerHeight
-const FPS = 60
+const FPS = 25
 const AMOUNT = 500
-const PERSPECTIVE = 500
+const PERSPECTIVE = 400
 const PARTICLE_SIZE = 5
 
 if (app) {
