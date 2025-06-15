@@ -1,95 +1,86 @@
 import type { Position, Velocity, Turbulence, Color } from "./types";
+import type { IParticle } from "./interfaces";
 
-const redVariants = [
+const RED_VARIANTS: Color[] = [
   { r: 255, g: 0, b: 0 },      // Rouge vif
   { r: 255, g: 50, b: 50 },    // Rouge clair
   { r: 200, g: 0, b: 0 },      // Rouge foncé
   { r: 255, g: 100, b: 100 },  // Rouge pâle
   { r: 180, g: 0, b: 0 }       // Rouge bordeaux
 ];
-export class Particle {
 
-  protected _size: number = 3;
+const DEFAULT_CONFIG = {
+  SIZE: 3,
+  MAX_LIFETIME: 4000,
+  LIFETIME_VARIATION: 2000,
+  TURBULENCE_STRENGTH: 5,
+  TURBULENCE_STRENGTH_VARIATION: 0.1,
+  TURBULENCE_FREQUENCY: 0.5,
+  TURBULENCE_FREQUENCY_VARIATION: 0.5,
+  AIR_RESISTANCE: 0.00008,
+  RED_PARTICLE_CHANCE: 0.3,
+  INITIAL_FORCE: 200
+};
+
+export class Particle implements IParticle {
+  private readonly _size: number = DEFAULT_CONFIG.SIZE;
   private lifetime: number = 0;
-  private maxLifetime: number = 4000;
+  private readonly maxLifetime: number;
   private velocity: Velocity;
   readonly position: Position;
   private turbulence: Turbulence;
-  private turbulenceStrength: number;
-  private turbulenceFrequency: number;
-  private turbulencePhase: number;
-  private airResistance: number = 0.00008; // Coefficient de résistance de l'air
+  private readonly turbulenceStrength: number;
+  private readonly turbulenceFrequency: number;
+  private readonly turbulencePhase: number;
+  private readonly airResistance: number = DEFAULT_CONFIG.AIR_RESISTANCE;
   readonly color: Color;
 
-  constructor(
-    x: number,
-    y: number,
-    z: number,
-  ) {
+  constructor(x: number, y: number, z: number) {
     this.position = { x, y, z };
-    const force = 200;
-
-    this.velocity = this.normalizeVelocity(force);
+    this.velocity = this.normalizeVelocity(DEFAULT_CONFIG.INITIAL_FORCE);
     this.turbulence = { x: 0, y: 0, z: 0 };
-
-    this.maxLifetime = 4000 + (Math.random() -.5) * 2000;
-    
-    // Paramètres de turbulence aléatoires pour chaque particule
-    this.turbulenceStrength = 5 + Math.random() * .1;
-    this.turbulenceFrequency = 0.5 + Math.random() * .5;
-    this.turbulencePhase = Math.random() * Math.PI * 1;
-
-    // 30% de chance d'être rouge avec différentes nuances
-    if (Math.random() < 0.3) {
-
-      this.color = redVariants[Math.floor(Math.random() * redVariants.length)];
-    } else {
-      this.color = { r: 255, g: 255, b: 255 };
-    }
+    this.maxLifetime = DEFAULT_CONFIG.MAX_LIFETIME + (Math.random() - 0.5) * DEFAULT_CONFIG.LIFETIME_VARIATION;
+    this.turbulenceStrength = DEFAULT_CONFIG.TURBULENCE_STRENGTH + Math.random() * DEFAULT_CONFIG.TURBULENCE_STRENGTH_VARIATION;
+    this.turbulenceFrequency = DEFAULT_CONFIG.TURBULENCE_FREQUENCY + Math.random() * DEFAULT_CONFIG.TURBULENCE_FREQUENCY_VARIATION;
+    this.turbulencePhase = Math.random() * Math.PI;
+    this.color = this.generateColor();
   }
   
-  get alpha() {
+  get alpha(): number {
     return 1 - this.lifeTimePercentage();
   }
 
-  get size() {
+  get size(): number {
     return this._size;
   }
 
-  private normalizeVelocity(force: number) {
-    const x = (Math.random() - 0.5) * 2
-    const y = (Math.random() - 0.5) * 2
-    const z = (Math.random() - 0.5) * 2
-    const magnitude = Math.sqrt(
-      Math.pow(x, 2) +
-      Math.pow(y, 2) +
-      Math.pow(z, 2)
-    );
+  private generateColor(): Color {
+    if (Math.random() < DEFAULT_CONFIG.RED_PARTICLE_CHANCE) {
+      return RED_VARIANTS[Math.floor(Math.random() * RED_VARIANTS.length)];
+    }
+    return { r: 255, g: 255, b: 255 };
+  }
 
-    if (magnitude !== 0) {
-      return {
-        x: (x / magnitude) * force,
-        y: (y / magnitude) * force,
-        z: (z / magnitude) * force
-      }
+  private normalizeVelocity(force: number): Velocity {
+    const x = (Math.random() - 0.5) * 2;
+    const y = (Math.random() - 0.5) * 2;
+    const z = (Math.random() - 0.5) * 2;
+    const magnitude = Math.sqrt(x * x + y * y + z * z);
+
+    if (magnitude === 0) {
+      return { x: 0, y: 0, z: 0 };
     }
 
     return {
-      x: 0,
-      y: 0,
-      z: 0
-    }
+      x: (x / magnitude) * force,
+      y: (y / magnitude) * force,
+      z: (z / magnitude) * force
+    };
   }
 
-  getPosition() {
-    return this.position;
-  }
-
-  private updateTurbulence() {
-    // Utiliser le temps comme seed pour la turbulence, avec une phase aléatoire
+  private updateTurbulence(): void {
     const time = (this.lifetime * this.turbulenceFrequency) + this.turbulencePhase;
     
-    // Générer des valeurs de turbulence avec une fonction de bruit
     this.turbulence = {
       x: (Math.sin(time) + Math.sin(time * 1.7)) * this.turbulenceStrength,
       y: (Math.sin(time * 1.3) + Math.sin(time * 2.1)) * this.turbulenceStrength,
@@ -105,35 +96,27 @@ export class Particle {
     );
   }
 
-  private applyAirResistance(deltaTime: number) {
+  private applyAirResistance(deltaTime: number): void {
     const speed = this.getVelocityMagnitude();
     if (speed === 0) return;
 
-    // Calcul de la force de résistance (proportionnelle au carré de la vitesse)
     const dragForce = this.airResistance * speed * speed;
-    
-    // Calcul du facteur de réduction
     const reductionFactor = 1 - (dragForce * deltaTime / 1000);
     
-    // Application de la résistance
     this.velocity.x *= reductionFactor;
     this.velocity.y *= reductionFactor;
     this.velocity.z *= reductionFactor;
   }
 
-  // Method to update position based on velocity
-  update(deltaTime: number) {
+  update(deltaTime: number): void {
     this.updateTurbulence();
     
-    // Appliquer la turbulence à la vélocité
     this.velocity.x += this.turbulence.x;
     this.velocity.y += this.turbulence.y;
     this.velocity.z += this.turbulence.z;
 
-    // Appliquer la résistance de l'air
     this.applyAirResistance(deltaTime);
 
-    // Mettre à jour la position
     this.position.x += this.velocity.x * (deltaTime / 1000);
     this.position.y += this.velocity.y * (deltaTime / 1000);
     this.position.z += this.velocity.z * (deltaTime / 1000);
@@ -141,23 +124,19 @@ export class Particle {
     this.lifetime += deltaTime;
   }
 
-  isAlive() {
+  isAlive(): boolean {
     return this.lifetime < this.maxLifetime;
   }
 
-  lifeTimePercentage() {
+  private lifeTimePercentage(): number {
     return this.lifetime / this.maxLifetime;
   }
 
-  // Method to set velocity
-  setVelocity(x: number, y: number, z: number) {
-    this.velocity.x = x;
-    this.velocity.y = y;
-    this.velocity.z = z;
+  setVelocity(x: number, y: number, z: number): void {
+    this.velocity = { x, y, z };
   }
 
-  // Method to add force to velocity
-  addForce(x: number, y: number, z: number) {
+  addForce(x: number, y: number, z: number): void {
     this.velocity.x += x;
     this.velocity.y += y;
     this.velocity.z += z;

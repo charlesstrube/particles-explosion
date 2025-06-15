@@ -21,7 +21,7 @@ if (app) {
 
   console.log(WIDTH, HEIGHT)
 
-  const Particular = new ParticleEngine(WIDTH, HEIGHT)
+  const Particular = new ParticleEngine()
 
   const Render = new RenderEngine(
     canvas,

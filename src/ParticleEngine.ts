@@ -1,25 +1,28 @@
 import { Particle } from "./Particle"
+import type { IParticleEngine } from "./interfaces"
 
-export class ParticleEngine {
+export class ParticleEngine implements IParticleEngine {
 
-  public particles: Particle[] = []
+  private _particles: Particle[] = []
 
-  constructor(public width: number, public height: number) {}
+  get particles(): Particle[] {
+    return this._particles
+  }
 
-  spawnParticles(x: number, y: number, z: number, amount: number) {
+  spawnParticles(x: number, y: number, z: number, amount: number): void {
     for (let i = 0; i < amount; i++) {
-      this.particles.push(new Particle(x, y, z))
+      this._particles.push(new Particle(x, y, z))
     }
   }
 
-  update(deltaTime: number) {
-    this.particles = this.particles.filter((particle) => {
+  update(deltaTime: number): void {
+    this._particles = this._particles.filter((particle) => {
       particle.update(deltaTime)
       return particle.isAlive()
     })
   }
 
-  sortParticles() {
-    this.particles.sort((a, b) => b.position.z - a.position.z)
+  sortParticles(): void {
+    this._particles.sort((a, b) => b.position.z - a.position.z)
   }
 }

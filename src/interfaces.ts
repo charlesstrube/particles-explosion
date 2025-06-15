@@ -1,4 +1,5 @@
 import { Particle } from "./Particle";
+import type { Position, Color } from "./types";
 
 export interface IMouseHandler {
   readonly isHolding: boolean;
@@ -21,4 +22,22 @@ export interface ICanvasManager {
   get context(): CanvasRenderingContext2D;
   get width(): number;
   get height(): number;
+}
+
+export interface IParticle {
+  readonly position: Position;
+  readonly color: Color;
+  readonly alpha: number;
+  readonly size: number;
+  update(deltaTime: number): void;
+  isAlive(): boolean;
+  setVelocity(x: number, y: number, z: number): void;
+  addForce(x: number, y: number, z: number): void;
+}
+
+export interface IParticleEngine {
+  particles: IParticle[];
+  spawnParticles(x: number, y: number, z: number, amount: number): void;
+  update(deltaTime: number): void;
+  sortParticles(): void;
 } 
