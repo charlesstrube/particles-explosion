@@ -9,6 +9,7 @@ const redVariants = [
 ];
 export class Particle {
 
+  protected _size: number = 3;
   private lifetime: number = 0;
   private maxLifetime: number = 4000;
   private velocity: Velocity;
@@ -46,6 +47,14 @@ export class Particle {
     } else {
       this.color = { r: 255, g: 255, b: 255 };
     }
+  }
+  
+  get alpha() {
+    return 1 - this.lifeTimePercentage();
+  }
+
+  get size() {
+    return this._size;
   }
 
   private normalizeVelocity(force: number) {

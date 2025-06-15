@@ -72,14 +72,10 @@ export class RenderEngine {
   }
 
   setup() {
-
-
-
     const fpsInterval = 1000 / this._fps
     let now = Date.now()
     let then = now
     let elapsed;
-
 
     this._context.scale(this._ratio, this._ratio)
 
@@ -109,8 +105,6 @@ export class RenderEngine {
 
         // Put your drawing code here
 
-
-
         const particles = this.onRender?.(elapsed)
 
         if (!particles) {
@@ -118,63 +112,81 @@ export class RenderEngine {
         }
 
         this.clear()
-        this._context.fillStyle = 'black'
-        this._context.fillRect(0, 0, this.canvas.width, this.canvas.height)
-        this._context.restore()
-
-        // Trier les particules par Z pour un rendu correct de la profondeur
-        particles
-          .toSorted((a, b) => b.position.z - a.position.z)
-          .forEach((particle) => {
-            const alpha = 1 - particle.lifeTimePercentage();
-            const scale = this._perspective / (this._perspective + particle.position.z);
-
-            // Calculer la position projetée
-            const projectedX = (particle.position.x - this._width / 2) * scale + this._width / 2;
-            const projectedY = (particle.position.y - this._height / 2) * scale + this._height / 2;
-
-            // Taille de la particule qui varie avec la profondeur
-            const baseSize = 3;
-            const zFactor = Math.max(0, -particle.position.z / this._perspective);
-            const size = baseSize * (1 + zFactor * 0.2) * scale;
-
-            if (particle.position.z < 0) {
-              // Dessiner un hexagone pour les particules proches de la caméra
-              this._context.beginPath();
-              const sides = 6;
-              const angle = (Math.PI * 2) / sides;
-
-              for (let i = 0; i < sides; i++) {
-                const x = projectedX + size * Math.cos(angle * i);
-                const y = projectedY + size * Math.sin(angle * i);
-                if (i === 0) {
-                  this._context.moveTo(x, y);
-                } else {
-                  this._context.lineTo(x, y);
-                }
-              }
-              this._context.closePath();
-
-              // Ajuster l'alpha en fonction de la profondeur pour les particules proches
-              const depthAlpha = Math.max(0.2, 0.8 - zFactor * 0.6);
-              const finalAlpha = alpha * depthAlpha;
-              this._context.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${finalAlpha})`;
-            } else {
-              // Dessiner un cercle pour les particules éloignées
-              this._context.beginPath();
-              this._context.arc(projectedX, projectedY, size, 0, Math.PI * 2);
-              this._context.closePath();
-              this._context.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${alpha})`;
-            }
-            this._context.fill();
-            this._context.restore();
-          })
+        particles.forEach(this.drawParticle.bind(this))
       }
     }
     loop();
-
   }
+
+  projectParticle(particle: Particle) {
+    const scale = this._perspective / (this._perspective + particle.position.z);
+
+    // Calculer la position projetée
+    const projectedX = (particle.position.x - this._width / 2) * scale + this._width / 2;
+    const projectedY = (particle.position.y - this._height / 2) * scale + this._height / 2;
+
+    // Taille de la particule qui varie avec la profondeur
+    const zFactor = Math.max(0, -particle.position.z / this._perspective);
+    const size = particle.size * (1 + zFactor * 0.2) * scale;
+
+    return {
+      size,
+      projectedX,
+      projectedY,
+      zFactor
+    }
+  }
+
+  drawCloseParticle(particle: Particle) {
+    const { projectedX, projectedY, size, zFactor } = this.projectParticle(particle)
+
+    // Dessiner un hexagone pour les particules proches de la caméra
+    this._context.beginPath();
+    const sides = 6;
+    const angle = (Math.PI * 2) / sides;
+
+    for (let i = 0; i < sides; i++) {
+      const x = projectedX + size * Math.cos(angle * i);
+      const y = projectedY + size * Math.sin(angle * i);
+      if (i === 0) {
+        this._context.moveTo(x, y);
+      } else {
+        this._context.lineTo(x, y);
+      }
+    }
+    this._context.closePath();
+
+    // Ajuster l'alpha en fonction de la profondeur pour les particules proches
+    const depthAlpha = Math.max(0.2, 0.8 - zFactor * 0.6);
+    const finalAlpha = particle.alpha * depthAlpha;
+    this._context.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${finalAlpha})`;
+    this._context.fill();
+    this._context.restore();
+  }
+
+  drawFarParticle(particle: Particle) {
+    const { projectedX, projectedY, size } = this.projectParticle(particle)
+    this._context.beginPath();
+      this._context.arc(projectedX, projectedY, size, 0, Math.PI * 2);
+      this._context.closePath();
+      this._context.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${particle.alpha})`;
+    this._context.fill();
+    this._context.restore();
+  }
+
+  drawParticle(particle: Particle) {
+    if (particle.position.z < 0) {
+      // Dessiner un hexagone pour les particules proches de la caméra
+      this.drawCloseParticle(particle)
+      return
+    }
+    this.drawFarParticle(particle)
+  }
+
   clear() {
     this._context?.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this._context.fillStyle = 'black'
+    this._context.fillRect(0, 0, this.canvas.width, this.canvas.height)
+    this._context.restore()
   }
 }
