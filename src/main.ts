@@ -27,7 +27,6 @@ if (app) {
   app.appendChild(canvas)
 
 
-
   const Particular = new ParticleEngine()
   const Render = new RenderEngine(
     canvas,
@@ -37,11 +36,8 @@ if (app) {
     PERSPECTIVE
   )
 
-
-
-
   // Création des boutons pour changer le type de particules
-  const createButton = (text: string, factory: any) => {
+  const createButton = (text: string, fatory: any) => {
     const button = document.createElement('button')
     button.textContent = text
     button.style.margin = '5px'

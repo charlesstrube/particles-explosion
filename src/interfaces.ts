@@ -18,7 +18,6 @@ export interface IGameLoop {
 }
 
 export interface ICanvasManager {
-  get context(): CanvasRenderingContext2D;
   get width(): number;
   get height(): number;
 }
@@ -26,7 +25,7 @@ export interface ICanvasManager {
 export interface IParticle {
   readonly position: Position;
   readonly color: Color;
-  readonly alpha: number;
+  alpha: number;
   readonly size: number;
   update(deltaTime: number): void;
   isAlive(): boolean;

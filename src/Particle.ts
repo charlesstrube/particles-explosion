@@ -23,7 +23,7 @@ const DEFAULT_CONFIG = {
 };
 
 export class Particle implements IParticle {
-  private readonly _size: number = DEFAULT_CONFIG.SIZE;
+  readonly size: number = DEFAULT_CONFIG.SIZE;
   private lifetime: number = 0;
   private readonly maxLifetime: number;
   private velocity: Velocity;
@@ -34,6 +34,7 @@ export class Particle implements IParticle {
   private readonly turbulencePhase: number;
   private readonly airResistance: number = DEFAULT_CONFIG.AIR_RESISTANCE;
   readonly color: Color;
+  public alpha: number = 1;
 
   constructor(x: number, y: number, z: number) {
     this.position = { x, y, z };
@@ -44,14 +45,6 @@ export class Particle implements IParticle {
     this.turbulenceFrequency = DEFAULT_CONFIG.TURBULENCE_FREQUENCY + Math.random() * DEFAULT_CONFIG.TURBULENCE_FREQUENCY_VARIATION;
     this.turbulencePhase = Math.random() * Math.PI;
     this.color = this.generateColor();
-  }
-  
-  get alpha(): number {
-    return 1 - this.lifeTimePercentage();
-  }
-
-  get size(): number {
-    return this._size;
   }
 
   private generateColor(): Color {
@@ -122,10 +115,15 @@ export class Particle implements IParticle {
     this.position.z += this.velocity.z * (deltaTime / 1000);
     
     this.lifetime += deltaTime;
+    this.alpha = this.getAlpha();
   }
 
   isAlive(): boolean {
     return this.lifetime < this.maxLifetime;
+  }
+
+  protected getAlpha(): number {
+    return 1 - this.lifeTimePercentage();
   }
 
   private lifeTimePercentage(): number {

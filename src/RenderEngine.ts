@@ -1,14 +1,13 @@
 import { MouseHandler } from "./MouseHandler";
-import { ParticleRenderer } from "./ParticleRenderer";
 import { GameLoop } from "./GameLoop";
-import { CanvasManager } from "./CanvasManager";
 import type { IParticle } from "./interfaces";
+import { MESSAGE_TYPE, type Message } from "./types";
 
 export class RenderEngine {
   private mouseHandler: MouseHandler;
-  private particleRenderer: ParticleRenderer;
   private gameLoop: GameLoop;
-  private canvasManager: CanvasManager;
+
+  private worker: Worker;
 
   public onRender: ((elapsed: number) => IParticle[]) | undefined;
   public onMouseDown: ((x: number, y: number) => void) | undefined;
@@ -22,13 +21,21 @@ export class RenderEngine {
     fps: number = 60,
     perspective: number = 1000
   ) {
-    this.canvasManager = new CanvasManager(canvas, width, height);
-    this.particleRenderer = new ParticleRenderer(
-      this.canvasManager.context,
-      this.canvasManager.width,
-      this.canvasManager.height,
-      perspective
-    );
+    const ratio = window.devicePixelRatio;
+
+
+    const offscreenCanvas = canvas.transferControlToOffscreen();
+    this.worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
+    this.postMessage({
+      type: MESSAGE_TYPE.CREATE_CANVAS,
+      payload: {
+        canvas: offscreenCanvas,
+        perspective,
+        ratio,
+        width,
+        height
+      }
+    }, [offscreenCanvas]);
 
     this.mouseHandler = new MouseHandler(canvas, {
       onMouseDown: (x, y) => this.onMouseDown?.(x, y),
@@ -49,7 +56,10 @@ export class RenderEngine {
   }
 
   set perspective(perspective: number) {
-    this.particleRenderer.perspective = perspective;
+    this.postMessage({
+      type: MESSAGE_TYPE.UPDATE_PERSPECTIVE,
+      payload: { perspective }
+    });
   }
 
   private update(elapsed: number) {
@@ -60,23 +70,13 @@ export class RenderEngine {
     const particles = this.onRender?.(elapsed);
     if (!particles) return;
 
-    this.particleRenderer.clear();
-    particles.forEach(particle => this.particleRenderer.drawParticle(particle));
+    this.postMessage({
+      type: MESSAGE_TYPE.RENDER,
+      payload: { particles }
+    });
   }
 
-  set width(width: number) {
-    this.canvasManager.width = width;
-  }
-
-  get width() {
-    return this.canvasManager.width;
-  }
-
-  set height(height: number) {
-    this.canvasManager.height = height;
-  }
-
-  get height() {
-    return this.canvasManager.height;
+  postMessage(message: Message, options?: any) {
+    this.worker.postMessage(message, options);
   }
 }

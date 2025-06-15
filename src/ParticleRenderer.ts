@@ -2,7 +2,7 @@ import type { IParticleRenderer, IParticle } from "./interfaces";
 
 export class ParticleRenderer implements IParticleRenderer {
   constructor(
-    private context: CanvasRenderingContext2D,
+    private context: OffscreenCanvasRenderingContext2D,
     private width: number,
     private height: number,
     private _perspective: number
@@ -24,6 +24,7 @@ export class ParticleRenderer implements IParticleRenderer {
 
     const zFactor = Math.max(0, -particle.position.z / this._perspective);
     const size = particle.size * (1 + zFactor * 0.2) * scale;
+
 
     return {
       size,
@@ -60,26 +61,33 @@ export class ParticleRenderer implements IParticleRenderer {
 
   drawFarParticle(particle: IParticle) {
     const { projectedX, projectedY, size } = this.projectParticle(particle);
+
+    // this.context.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${particle.alpha})`;
+
+    // this.context.fillRect(projectedX, projectedY, size, size);
+
+
+
+    this.context.save();
     this.context.beginPath();
     this.context.arc(projectedX, projectedY, size, 0, Math.PI * 2);
-    this.context.closePath();
     this.context.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${particle.alpha})`;
+    this.context.closePath();
     this.context.fill();
     this.context.restore();
   }
 
   drawParticle(particle: IParticle) {
-    if (particle.position.z < 0) {
-      this.drawCloseParticle(particle);
-      return;
-    }
+    // if (particle.position.z < 0) {
+    //   this.drawCloseParticle(particle);
+    //   return;
+    // }
     this.drawFarParticle(particle);
   }
 
-  clear() {
+  clear() { 
     this.context.clearRect(0, 0, this.width, this.height);
     this.context.fillStyle = 'black';
     this.context.fillRect(0, 0, this.width, this.height);
-    this.context.restore();
   }
 } 
