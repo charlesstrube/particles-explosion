@@ -33,7 +33,6 @@ export class Particle {
     this.turbulence = { x: 0, y: 0, z: 0 };
 
     this.maxLifetime = 4000 + (Math.random() -.5) * 2000;
-    console.log(this.maxLifetime)
     
     // Paramètres de turbulence aléatoires pour chaque particule
     this.turbulenceStrength = 5 + Math.random() * .1;

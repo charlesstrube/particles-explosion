@@ -19,6 +19,8 @@ if (app) {
 
   app.appendChild(canvas)
 
+  console.log(WIDTH, HEIGHT)
+
   const Particular = new ParticleEngine(WIDTH, HEIGHT)
 
   const Render = new RenderEngine(
