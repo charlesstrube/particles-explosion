@@ -1,6 +1,6 @@
 import { Particle } from "./Particle"
 
-export class Engine {
+export class ParticleEngine {
 
   public particles: Particle[] = []
 
@@ -17,5 +17,9 @@ export class Engine {
       particle.update(deltaTime)
       return particle.isAlive()
     })
+  }
+
+  sortParticles() {
+    this.particles.sort((a, b) => b.position.z - a.position.z)
   }
 }
