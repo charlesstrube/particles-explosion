@@ -6,10 +6,10 @@ export class GameLoop implements IGameLoop {
   private lastFrameTime: number = 0;
 
   constructor(
-    private _fps: number,
+    fps: number,
     private onUpdate: (elapsed: number) => void
   ) {
-    this.fps = _fps;
+    this.fps = fps;
   }
 
   start() {
@@ -37,7 +37,6 @@ export class GameLoop implements IGameLoop {
   }
 
   set fps(fps: number) {
-    this._fps = fps;
     this.fpsInterval = 1000 / fps;
   }
 } 
