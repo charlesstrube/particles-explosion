@@ -1,15 +1,9 @@
-import { Particle } from "./Particle";
 import type { Position, Color } from "./types";
 
 export interface IMouseHandler {
   readonly isHolding: boolean;
   readonly x: number;
   readonly y: number;
-}
-
-export interface IParticleRenderer {
-  drawParticle(particle: Particle): void;
-  clear(): void;
 }
 
 export interface IGameLoop {
@@ -41,3 +35,8 @@ export interface IParticleEngine {
   update(deltaTime: number): void;
   sortParticles(): void;
 } 
+
+export interface IParticleRenderer {
+  drawParticle(particle: IParticle): void;
+  clear(): void;
+}

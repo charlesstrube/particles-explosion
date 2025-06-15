@@ -1,5 +1,4 @@
-import { Particle } from "./Particle";
-import type { IParticleRenderer } from "./interfaces";
+import type { IParticleRenderer, IParticle } from "./interfaces";
 
 export class ParticleRenderer implements IParticleRenderer {
   constructor(
@@ -9,7 +8,7 @@ export class ParticleRenderer implements IParticleRenderer {
     private perspective: number
   ) {}
 
-  projectParticle(particle: Particle) {
+  projectParticle(particle: IParticle) {
     const scale = this.perspective / (this.perspective + particle.position.z);
 
     const projectedX = (particle.position.x - this.width / 2) * scale + this.width / 2;
@@ -26,7 +25,7 @@ export class ParticleRenderer implements IParticleRenderer {
     };
   }
 
-  drawCloseParticle(particle: Particle) {
+  drawCloseParticle(particle: IParticle) {
     const { projectedX, projectedY, size, zFactor } = this.projectParticle(particle);
 
     this.context.beginPath();
@@ -51,7 +50,7 @@ export class ParticleRenderer implements IParticleRenderer {
     this.context.restore();
   }
 
-  drawFarParticle(particle: Particle) {
+  drawFarParticle(particle: IParticle) {
     const { projectedX, projectedY, size } = this.projectParticle(particle);
     this.context.beginPath();
     this.context.arc(projectedX, projectedY, size, 0, Math.PI * 2);
@@ -61,7 +60,7 @@ export class ParticleRenderer implements IParticleRenderer {
     this.context.restore();
   }
 
-  drawParticle(particle: Particle) {
+  drawParticle(particle: IParticle) {
     if (particle.position.z < 0) {
       this.drawCloseParticle(particle);
       return;

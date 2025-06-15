@@ -1,8 +1,8 @@
-import { Particle } from "./Particle";
 import { MouseHandler } from "./MouseHandler";
 import { ParticleRenderer } from "./ParticleRenderer";
 import { GameLoop } from "./GameLoop";
 import { CanvasManager } from "./CanvasManager";
+import type { IParticle } from "./interfaces";
 
 export class RenderEngine {
   private mouseHandler: MouseHandler;
@@ -10,7 +10,7 @@ export class RenderEngine {
   private gameLoop: GameLoop;
   private canvasManager: CanvasManager;
 
-  public onRender: ((elapsed: number) => Particle[]) | undefined;
+  public onRender: ((elapsed: number) => IParticle[]) | undefined;
   public onMouseDown: ((x: number, y: number) => void) | undefined;
   public onMouseUp: ((x: number, y: number) => void) | undefined;
   public onMouseHold: ((x: number, y: number) => void) | undefined;

@@ -1,11 +1,11 @@
 import { Particle } from "./Particle"
-import type { IParticleEngine } from "./interfaces"
+import type { IParticle, IParticleEngine } from "./interfaces"
 
 export class ParticleEngine implements IParticleEngine {
 
-  private _particles: Particle[] = []
+  private _particles: IParticle[] = []
 
-  get particles(): Particle[] {
+  get particles(): IParticle[] {
     return this._particles
   }
 
