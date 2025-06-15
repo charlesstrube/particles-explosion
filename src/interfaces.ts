@@ -6,6 +6,11 @@ export interface IMouseHandler {
   readonly y: number;
 }
 
+export interface IParticleRenderer {
+  drawParticle(particle: IParticle): void;
+  clear(): void;
+}
+
 export interface IGameLoop {
   start(): void;
   stop(): void;
@@ -29,14 +34,14 @@ export interface IParticle {
   addForce(x: number, y: number, z: number): void;
 }
 
+export interface IParticleFactory {
+  createParticle(x: number, y: number, z: number): IParticle;
+}
+
 export interface IParticleEngine {
   particles: IParticle[];
   spawnParticles(x: number, y: number, z: number, amount: number): void;
   update(deltaTime: number): void;
   sortParticles(): void;
+  set particleFactory(factory: IParticleFactory);
 } 
-
-export interface IParticleRenderer {
-  drawParticle(particle: IParticle): void;
-  clear(): void;
-}

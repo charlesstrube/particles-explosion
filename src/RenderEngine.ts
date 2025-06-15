@@ -40,8 +40,16 @@ export class RenderEngine {
     this.setup();
   }
 
+  set fps(fps: number) {
+    this.gameLoop.fps = fps;
+  }
+
   private setup() {
     this.gameLoop.start();
+  }
+
+  set perspective(perspective: number) {
+    this.particleRenderer.perspective = perspective;
   }
 
   private update(elapsed: number) {

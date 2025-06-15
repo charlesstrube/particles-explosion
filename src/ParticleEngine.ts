@@ -1,17 +1,26 @@
-import { Particle } from "./Particle"
-import type { IParticle, IParticleEngine } from "./interfaces"
+import type { IParticle, IParticleEngine, IParticleFactory } from "./interfaces"
+import { DefaultParticleFactory } from "./ParticleFactory"
 
 export class ParticleEngine implements IParticleEngine {
 
   private _particles: IParticle[] = []
+  private _particleFactory: IParticleFactory
+
+  constructor() {
+    this._particleFactory = new DefaultParticleFactory()
+  }
 
   get particles(): IParticle[] {
     return this._particles
   }
 
+  set particleFactory(factory: IParticleFactory) {
+    this._particleFactory = factory
+  }
+
   spawnParticles(x: number, y: number, z: number, amount: number): void {
     for (let i = 0; i < amount; i++) {
-      this._particles.push(new Particle(x, y, z))
+      this._particles.push(this._particleFactory.createParticle(x, y, z))
     }
   }
 
