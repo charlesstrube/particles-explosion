@@ -62,12 +62,6 @@ export class ParticleRenderer implements IParticleRenderer {
   drawFarParticle(particle: IParticle) {
     const { projectedX, projectedY, size } = this.projectParticle(particle);
 
-    // this.context.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${particle.alpha})`;
-
-    // this.context.fillRect(projectedX, projectedY, size, size);
-
-
-
     this.context.save();
     this.context.beginPath();
     this.context.arc(projectedX, projectedY, size, 0, Math.PI * 2);
@@ -78,10 +72,10 @@ export class ParticleRenderer implements IParticleRenderer {
   }
 
   drawParticle(particle: IParticle) {
-    // if (particle.position.z < 0) {
-    //   this.drawCloseParticle(particle);
-    //   return;
-    // }
+    if (particle.position.z < 0) {
+      this.drawCloseParticle(particle);
+      return;
+    }
     this.drawFarParticle(particle);
   }
 

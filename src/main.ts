@@ -37,7 +37,7 @@ if (app) {
   )
 
   // Création des boutons pour changer le type de particules
-  const createButton = (text: string, fatory: any) => {
+  const createButton = (text: string, factory: any) => {
     const button = document.createElement('button')
     button.textContent = text
     button.style.margin = '5px'
