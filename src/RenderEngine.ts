@@ -1,14 +1,17 @@
 import { MouseHandler } from "./MouseHandler";
-import { ParticleRenderer } from "./ParticleRenderer";
+import { Particle2dRenderer } from "./Renderers/Particle2dRenderer";
 import { GameLoop } from "./GameLoop";
-import { CanvasManager } from "./CanvasManager";
-import type { IParticle } from "./interfaces";
+import { Canvas2dManager } from "./CanvasManagers/Canvas2dManager";
+import { CanvasGLManager } from "./CanvasManagers/CanvasGLManager";
+import type { IContextManager, IParticle, IParticleRenderer } from "./interfaces";
+import { ParticleGLRenderer } from "./Renderers/ParticleGLRenderer";
+import type { CanvasManager } from "./CanvasManagers/CanvasManager";
 
-export class RenderEngine {
+export class RenderEngine<T extends '2d' | 'gl'> {
   private mouseHandler: MouseHandler;
-  private particleRenderer: ParticleRenderer;
+  private particleRenderer: IParticleRenderer;
   private gameLoop: GameLoop;
-  private canvasManager: CanvasManager;
+  private contextManager: Canvas2dManager | CanvasGLManager;
 
   public onRender: ((elapsed: number) => IParticle[]) | undefined;
   public onMouseDown: ((x: number, y: number) => void) | undefined;
@@ -17,18 +20,31 @@ export class RenderEngine {
 
   constructor(
     canvas: HTMLCanvasElement,
+    type: T,
     width: number,
     height: number,
     fps: number = 60,
     perspective: number = 1000
   ) {
-    this.canvasManager = new CanvasManager(canvas, width, height);
-    this.particleRenderer = new ParticleRenderer(
-      this.canvasManager.context,
-      this.canvasManager.width,
-      this.canvasManager.height,
-      perspective
-    );
+    if (type === '2d') {
+      this.contextManager = new Canvas2dManager(canvas, width, height);
+      this.particleRenderer = new Particle2dRenderer(
+        this.contextManager.context,
+        this.contextManager.width,
+        this.contextManager.height,
+        perspective
+      );
+    } else if (type === 'gl') {
+      this.contextManager = new CanvasGLManager(canvas, width, height);
+      this.particleRenderer = new ParticleGLRenderer(
+        this.contextManager.context,
+        this.contextManager.width,
+        this.contextManager.height,
+        perspective
+      );
+    } else {
+      throw new Error('Invalid type');
+    }
 
     this.mouseHandler = new MouseHandler(canvas, {
       onMouseDown: (x, y) => this.onMouseDown?.(x, y),
@@ -65,18 +81,18 @@ export class RenderEngine {
   }
 
   set width(width: number) {
-    this.canvasManager.width = width;
+    this.contextManager.width = width;
   }
 
   get width() {
-    return this.canvasManager.width;
+    return this.contextManager.width;
   }
 
   set height(height: number) {
-    this.canvasManager.height = height;
+    this.contextManager.height = height;
   }
 
   get height() {
-    return this.canvasManager.height;
+    return this.contextManager.height;
   }
 }

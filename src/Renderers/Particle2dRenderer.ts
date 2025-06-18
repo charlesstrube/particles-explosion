@@ -1,6 +1,6 @@
-import type { IParticleRenderer, IParticle } from "./interfaces";
+import type { IParticleRenderer, IParticle } from "../interfaces";
 
-export class ParticleRenderer implements IParticleRenderer {
+export class Particle2dRenderer implements IParticleRenderer {
   constructor(
     private context: CanvasRenderingContext2D,
     private width: number,

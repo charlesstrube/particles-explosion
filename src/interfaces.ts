@@ -9,6 +9,7 @@ export interface IMouseHandler {
 export interface IParticleRenderer {
   drawParticle(particle: IParticle): void;
   clear(): void;
+  set perspective(perspective: number);
 }
 
 export interface IGameLoop {
@@ -18,9 +19,12 @@ export interface IGameLoop {
 }
 
 export interface ICanvasManager {
-  get context(): CanvasRenderingContext2D;
   get width(): number;
   get height(): number;
+}
+
+export interface IContextManager<T extends (CanvasRenderingContext2D | WebGLRenderingContext)> extends ICanvasManager {
+  get context(): T;
 }
 
 export interface IParticle {
