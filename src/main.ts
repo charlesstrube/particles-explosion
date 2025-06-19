@@ -31,7 +31,7 @@ if (app) {
   const Particular = new ParticleEngine()
   const Render = new RenderEngine(
     canvas,
-    '2d',
+    'gl',
     WIDTH, 
     HEIGHT, 
     FPS,

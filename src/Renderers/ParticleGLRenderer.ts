@@ -49,6 +49,7 @@ export class ParticleGLRenderer implements ParticleRendererSchema {
   }
 
   clear() {
-
+    this.context.clearColor(0.0, 0.0, 0.0, 1.0);
+    this.context.clear(this.context.COLOR_BUFFER_BIT);
   }
 } 
