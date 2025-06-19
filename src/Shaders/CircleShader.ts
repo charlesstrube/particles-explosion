@@ -4,8 +4,8 @@ export class CircleShader extends Shader {
   private positionLocation: number = -1;
   private colorLocation: number = -1;
   private sizeLocation: number = -1;
+  private alphaLocation: number = -1;
   private resolutionLocation: WebGLUniformLocation | null = null;
-  private alphaLocation: WebGLUniformLocation | null = null;
 
   constructor(gl: WebGLRenderingContext) {
     super(gl);
@@ -17,8 +17,8 @@ export class CircleShader extends Shader {
     this.positionLocation = this.getAttributeLocation('a_position');
     this.colorLocation = this.getAttributeLocation('a_color');
     this.sizeLocation = this.getAttributeLocation('a_size');
+    this.alphaLocation = this.getAttributeLocation('a_alpha');
     this.resolutionLocation = this.getUniformLocation('u_resolution');
-    this.alphaLocation = this.getUniformLocation('u_alpha');
   }
 
   protected getVertexShaderSource(): string {
@@ -26,10 +26,12 @@ export class CircleShader extends Shader {
       attribute vec2 a_position;
       attribute vec3 a_color;
       attribute float a_size;
+      attribute float a_alpha;
       
       uniform vec2 u_resolution;
       
       varying vec3 v_color;
+      varying float v_alpha;
       varying vec2 v_position;
       
       void main() {
@@ -41,6 +43,7 @@ export class CircleShader extends Shader {
         gl_PointSize = a_size;
         
         v_color = a_color;
+        v_alpha = a_alpha;
         v_position = a_position;
       }
     `;
@@ -51,21 +54,19 @@ export class CircleShader extends Shader {
       precision mediump float;
       
       varying vec3 v_color;
+      varying float v_alpha;
       varying vec2 v_position;
-      
-      uniform float u_alpha;
       
       void main() {
         // Calculer la distance du centre du point
         vec2 center = gl_PointCoord - 0.5;
         float distance = length(center);
         
-        // Créer un cercle plus gros avec des bords lisses
-        // Réduire la zone de transition pour agrandir le cercle
-        float circleAlpha = 1.0 - smoothstep(0.4, 0.5, distance);
+        // Créer un cercle avec des bords lisses
+        float circleAlpha = 1.0 - smoothstep(0.4, 0.9, distance);
         
         // Appliquer la couleur avec l'alpha combiné
-        gl_FragColor = vec4(v_color, circleAlpha * u_alpha);
+        gl_FragColor = vec4(v_color, circleAlpha * v_alpha);
       }
     `;
   }
@@ -73,12 +74,6 @@ export class CircleShader extends Shader {
   setResolution(width: number, height: number): void {
     if (this.resolutionLocation) {
       this.gl.uniform2f(this.resolutionLocation, width, height);
-    }
-  }
-
-  setAlpha(alpha: number): void {
-    if (this.alphaLocation) {
-      this.gl.uniform1f(this.alphaLocation, alpha);
     }
   }
 
@@ -92,5 +87,9 @@ export class CircleShader extends Shader {
 
   getSizeLocation(): number {
     return this.sizeLocation;
+  }
+
+  getAlphaLocation(): number {
+    return this.alphaLocation;
   }
 } 

@@ -76,14 +76,13 @@ if (app) {
       Particular.spawnParticles(x, y, 0, params.amount)
       willSpawn = false
     }
-    Particular.sortParticles()
     return Particular.particles
   }
 
   const gui = new GUI({
     name: 'Particular Explosion',
   })
-  gui.add(params, 'amount', 1, 1000)
+  gui.add(params, 'amount', 1, 10000)
   gui.add(params, 'fps', 1, 120).onChange((value) => {
     Render.fps = value
   })
