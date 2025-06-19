@@ -1,20 +1,20 @@
-import type { IParticle, IParticleEngine, IParticleFactory } from "./interfaces"
+import type { ParticleSchema, ParticleEngineSchema, ParticleFactorySchema } from "./interfaces"
 import { DefaultParticleFactory } from "./ParticleFactory"
 
-export class ParticleEngine implements IParticleEngine {
+export class ParticleEngine implements ParticleEngineSchema {
 
-  private _particles: IParticle[] = []
-  private _particleFactory: IParticleFactory
+  private _particles: ParticleSchema[] = []
+  private _particleFactory: ParticleFactorySchema
 
   constructor() {
     this._particleFactory = new DefaultParticleFactory()
   }
 
-  get particles(): IParticle[] {
+  get particles(): ParticleSchema[] {
     return this._particles
   }
 
-  set particleFactory(factory: IParticleFactory) {
+  set particleFactory(factory: ParticleFactorySchema) {
     this._particleFactory = factory
   }
 

@@ -1,12 +1,15 @@
-import type { IParticleRenderer, IParticle } from "../interfaces";
+import { Context2dManager } from "../CanvasManagers/Context2dManager";
+import { projectPoint } from "../helpers/projectPoint";
+import type { ParticleRendererSchema, ParticleSchema, CanvasManagerSchema, ContextManagerSchema } from "../interfaces";
 
-export class Particle2dRenderer implements IParticleRenderer {
+export class Particle2dRenderer implements ParticleRendererSchema {
+  private _contextManager: ContextManagerSchema<CanvasRenderingContext2D>
   constructor(
-    private context: CanvasRenderingContext2D,
-    private width: number,
-    private height: number,
+    private _canvasManager: CanvasManagerSchema,
     private _perspective: number
-  ) {}
+  ) {
+    this._contextManager = new Context2dManager(this._canvasManager.canvas);
+  }
 
   set perspective(perspective: number) {
     this._perspective = perspective;
@@ -16,24 +19,29 @@ export class Particle2dRenderer implements IParticleRenderer {
     return this._perspective;
   }
 
-  projectParticle(particle: IParticle) {
-    const scale = this._perspective / (this._perspective + particle.position.z);
-
-    const projectedX = (particle.position.x - this.width / 2) * scale + this.width / 2;
-    const projectedY = (particle.position.y - this.height / 2) * scale + this.height / 2;
-
-    const zFactor = Math.max(0, -particle.position.z / this._perspective);
-    const size = particle.size * (1 + zFactor * 0.2) * scale;
-
-    return {
-      size,
-      projectedX,
-      projectedY,
-      zFactor
-    };
+  private get width () {
+    return this._canvasManager.width
   }
 
-  drawCloseParticle(particle: IParticle) {
+  private get height () {
+    return this._canvasManager.height
+  }
+
+  private get context() {
+    return this._contextManager.context
+  }
+
+  projectParticle(particle: ParticleSchema) {
+    return projectPoint(
+      particle.position, 
+      particle.size, 
+      this._perspective, 
+      this.width, 
+      this.height
+    );
+  }
+
+  drawCloseParticle(particle: ParticleSchema) {
     const { projectedX, projectedY, size, zFactor } = this.projectParticle(particle);
 
     this.context.beginPath();
@@ -58,7 +66,7 @@ export class Particle2dRenderer implements IParticleRenderer {
     this.context.restore();
   }
 
-  drawFarParticle(particle: IParticle) {
+  drawFarParticle(particle: ParticleSchema) {
     const { projectedX, projectedY, size } = this.projectParticle(particle);
     this.context.beginPath();
     this.context.arc(projectedX, projectedY, size, 0, Math.PI * 2);
@@ -68,7 +76,7 @@ export class Particle2dRenderer implements IParticleRenderer {
     this.context.restore();
   }
 
-  drawParticle(particle: IParticle) {
+  drawParticle(particle: ParticleSchema) {
     if (particle.position.z < 0) {
       this.drawCloseParticle(particle);
       return;

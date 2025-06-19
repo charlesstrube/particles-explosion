@@ -1,12 +1,12 @@
-import type { ICanvasManager } from "../interfaces";
+import type { CanvasManagerSchema } from "../interfaces";
 
-export class CanvasManager implements ICanvasManager {
+export class CanvasManager implements CanvasManagerSchema {
   protected _width: number = 0;
   protected _height: number = 0;
   protected _ratio: number = window.devicePixelRatio;
 
   constructor(
-    protected canvas: HTMLCanvasElement,
+    protected _canvas: HTMLCanvasElement,
     width: number,
     height: number
   ) {
@@ -24,6 +24,10 @@ export class CanvasManager implements ICanvasManager {
     this._height = height;
     this.canvas.height = height * this._ratio;
     this.canvas.style.height = `${height}px`;
+  }
+
+  get canvas(): HTMLCanvasElement {
+    return this._canvas
   }
 
   get width(): number {

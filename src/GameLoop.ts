@@ -1,6 +1,6 @@
-import type { IGameLoop } from "./interfaces";
+import type { GameLoopSchema } from "./interfaces";
 
-export class GameLoop implements IGameLoop {
+export class GameLoop implements GameLoopSchema {
   private isRunning: boolean = false;
   private fpsInterval: number = 0;
   private lastFrameTime: number = 0;

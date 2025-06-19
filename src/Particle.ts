@@ -1,5 +1,5 @@
-import type { Position, Velocity, Turbulence, Color } from "./types";
-import type { IParticle } from "./interfaces";
+import type { Position, Velocity, Turbulence, Color } from "./interfaces";
+import type { ParticleSchema } from "./interfaces";
 
 const RED_VARIANTS: Color[] = [
   { r: 255, g: 0, b: 0 },      // Rouge vif
@@ -22,7 +22,7 @@ const DEFAULT_CONFIG = {
   INITIAL_FORCE: 200
 };
 
-export class Particle implements IParticle {
+export class Particle implements ParticleSchema {
   private readonly _size: number = DEFAULT_CONFIG.SIZE;
   private lifetime: number = 0;
   private readonly maxLifetime: number;

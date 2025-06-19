@@ -1,15 +1,12 @@
-import type { IContextManager } from "../interfaces";
-import { CanvasManager } from "./CanvasManager";
+import type { ContextManagerSchema } from "../interfaces";
 
-export class Canvas2dManager extends CanvasManager implements IContextManager<CanvasRenderingContext2D> {
+export class Context2dManager implements ContextManagerSchema<CanvasRenderingContext2D> {
   private _context: CanvasRenderingContext2D;
+  private _ratio: number = window.devicePixelRatio;
   
   constructor(
     protected canvas: HTMLCanvasElement,
-    width: number,
-    height: number
   ) {
-    super(canvas, width, height);
     this._context = this.getContext();
     this._context.scale(this._ratio, this._ratio);
   }

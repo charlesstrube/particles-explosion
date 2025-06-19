@@ -1,12 +1,15 @@
-import type { IParticleRenderer, IParticle } from "../interfaces";
+import { ContextGLManager } from "../CanvasManagers/ContextGLManager";
+import { projectPoint } from "../helpers/projectPoint";
+import type { CanvasManagerSchema, ParticleRendererSchema, ContextManagerSchema, ParticleSchema } from "../interfaces";
 
-export class ParticleGLRenderer implements IParticleRenderer {
+export class ParticleGLRenderer implements ParticleRendererSchema {
+  private _contextManager: ContextManagerSchema<WebGLRenderingContext>;
   constructor(
-    private context: WebGLRenderingContext,
-    private width: number,
-    private height: number,
+    private _canvasManager: CanvasManagerSchema,
     private _perspective: number
-  ) {}
+  ) {
+    this._contextManager = new ContextGLManager(this._canvasManager.canvas);
+  }
 
   set perspective(perspective: number) {
     this._perspective = perspective;
@@ -16,32 +19,33 @@ export class ParticleGLRenderer implements IParticleRenderer {
     return this._perspective;
   }
 
-  projectParticle(particle: IParticle) {
-    const scale = this._perspective / (this._perspective + particle.position.z);
+  private get width () {
+    return this._canvasManager.width
+  }
 
-    const projectedX = (particle.position.x - this.width / 2) * scale + this.width / 2;
-    const projectedY = (particle.position.y - this.height / 2) * scale + this.height / 2;
+  private get height () {
+    return this._canvasManager.height
+  }
 
-    const zFactor = Math.max(0, -particle.position.z / this._perspective);
-    const size = particle.size * (1 + zFactor * 0.2) * scale;
-
-    return {
-      size,
-      projectedX,
-      projectedY,
-      zFactor
-    };
+  private get context() {
+    return this._contextManager.context
   }
 
 
-  drawFarParticle(particle: IParticle) {
+  projectParticle(particle: ParticleSchema) {
+    return projectPoint(
+      particle.position, 
+      particle.size, 
+      this._perspective, 
+      this.width, 
+      this.height
+    );
+  }
+
+  drawParticle(particle: ParticleSchema) {
     const { projectedX, projectedY, size } = this.projectParticle(particle);
 
-  }
 
-  drawParticle(particle: IParticle) {
-
-    this.drawFarParticle(particle);
   }
 
   clear() {

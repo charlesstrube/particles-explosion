@@ -1,6 +1,6 @@
-import type { IMouseHandler } from "./interfaces";
+import type { MouseHandlerSchema } from "./interfaces";
 
-export class MouseHandler implements IMouseHandler {
+export class MouseHandler implements MouseHandlerSchema {
   private _holding: boolean = false;
   private _x: number = 0;
   private _y: number = 0;

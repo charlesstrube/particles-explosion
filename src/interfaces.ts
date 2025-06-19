@@ -1,33 +1,59 @@
-import type { Position, Color } from "./types";
+export interface Position {
+  x: number;
+  y: number;
+  z: number;
+}
 
-export interface IMouseHandler {
+export interface Velocity {
+  x: number;
+  y: number;
+  z: number;
+}
+
+export interface Turbulence {
+  x: number;
+  y: number;
+  z: number;
+}
+
+export interface Color {
+  r: number;
+  g: number;
+  b: number;
+}
+ 
+
+export interface MouseHandlerSchema {
   readonly isHolding: boolean;
   readonly x: number;
   readonly y: number;
 }
 
-export interface IParticleRenderer {
-  drawParticle(particle: IParticle): void;
+export interface ParticleRendererSchema {
+  drawParticle(particle: ParticleSchema): void;
   clear(): void;
   set perspective(perspective: number);
 }
 
-export interface IGameLoop {
+export interface GameLoopSchema {
   start(): void;
   stop(): void;
   set fps(fps: number);
 }
 
-export interface ICanvasManager {
+export interface CanvasManagerSchema {
   get width(): number;
   get height(): number;
+  get canvas(): HTMLCanvasElement;
+  set width(width: number);
+  set height(height: number);
 }
 
-export interface IContextManager<T extends (CanvasRenderingContext2D | WebGLRenderingContext)> extends ICanvasManager {
+export interface ContextManagerSchema<T extends (CanvasRenderingContext2D | WebGLRenderingContext)> {
   get context(): T;
 }
 
-export interface IParticle {
+export interface ParticleSchema {
   readonly position: Position;
   readonly color: Color;
   readonly alpha: number;
@@ -38,14 +64,14 @@ export interface IParticle {
   addForce(x: number, y: number, z: number): void;
 }
 
-export interface IParticleFactory {
-  createParticle(x: number, y: number, z: number): IParticle;
+export interface ParticleFactorySchema {
+  createParticle(x: number, y: number, z: number): ParticleSchema;
 }
 
-export interface IParticleEngine {
-  particles: IParticle[];
+export interface ParticleEngineSchema {
+  particles: ParticleSchema[];
   spawnParticles(x: number, y: number, z: number, amount: number): void;
   update(deltaTime: number): void;
   sortParticles(): void;
-  set particleFactory(factory: IParticleFactory);
-} 
+  set particleFactory(factory: ParticleFactorySchema);
+}

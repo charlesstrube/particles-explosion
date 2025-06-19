@@ -1,15 +1,11 @@
-import type { IContextManager } from "../interfaces";
-import { CanvasManager } from "./CanvasManager";
+import type { ContextManagerSchema } from "../interfaces";
 
-export class CanvasGLManager extends CanvasManager implements IContextManager<WebGLRenderingContext> {
+export class ContextGLManager implements ContextManagerSchema<WebGLRenderingContext> {
   protected _context: WebGLRenderingContext;
 
   constructor(
     protected canvas: HTMLCanvasElement,
-    width: number,
-    height: number
   ) {
-    super(canvas, width, height);
     this._context = this.getContext();
   }
 
