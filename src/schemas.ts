@@ -22,6 +22,21 @@ export interface CameraSchema {
   get fov(): number;
   get near(): number;
   get far(): number;
+  set positionX(position: number);
+  set positionY(position: number);
+  set positionZ(position: number);
+  set targetX(target: number);
+  set targetY(target: number);
+  set targetZ(target: number);
+  set fov(fov: number);
+  set near(near: number);
+  set far(far: number);
+  projectPointCamera(
+    itemPosition: Position,
+    itemSize: number,
+    containerWidth: number,
+    containerHeight: number
+  ): { size: number, projectedX: number, projectedY: number, zFactor: number, distanceToCamera: number };
 }
 
 export interface TurbulencePoint {
@@ -81,7 +96,7 @@ export interface ParticleSchema {
   readonly size: number;
   update(deltaTime: number): void;
   isAlive(): boolean;
-  setVelocity(x: number, y: number, z: number): void;
+  addVelocity(x: number, y: number, z: number): void;
   addForce(x: number, y: number, z: number): void;
   applyTurbulence(turbulence: Vector): void;
 }

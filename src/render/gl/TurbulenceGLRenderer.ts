@@ -1,8 +1,6 @@
-import { projectPoint } from "../../helpers/projectPoint";
 import type { CanvasManagerSchema, TurbulenceRendererSchema, TurbulencePoint, CameraSchema } from "../../schemas";
 import type { ContextGLManager } from "../../canvas/ContextGLManager";
 import { ShaderManager, TurbulenceShader } from "../../shader";
-import { projectPointCamera } from "../../helpers/projectPointCamera";
 
 export class TurbulenceRenderer implements TurbulenceRendererSchema {
   private _shaderManager: ShaderManager;
@@ -68,10 +66,9 @@ export class TurbulenceRenderer implements TurbulenceRendererSchema {
       const point = points[i];
 
       // Projeter la position du point avec projectPoint
-      const { projectedX, projectedY, zFactor } = projectPointCamera(
+      const { projectedX, projectedY, zFactor } = this._camera.projectPointCamera(
         point.position,
         1, // Taille de base
-        this._camera,
         this.width,
         this.height
       );
@@ -102,10 +99,9 @@ export class TurbulenceRenderer implements TurbulenceRendererSchema {
         z: point.position.z + point.direction.z
       };
 
-      const { projectedX: dirX, projectedY: dirY } = projectPointCamera(
+      const { projectedX: dirX, projectedY: dirY } = this._camera.projectPointCamera(
         directionEnd,
         1,
-        this._camera,
         this.width,
         this.height
       );
@@ -135,10 +131,9 @@ export class TurbulenceRenderer implements TurbulenceRendererSchema {
         z: point.position.z
       };
 
-      const { projectedX: radiusX } = projectPointCamera(
+      const { projectedX: radiusX } = this._camera.projectPointCamera(
         radiusEnd,
         1,
-        this._camera,
         this.width,
         this.height
       );

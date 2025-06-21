@@ -1,3 +1,4 @@
+import additionVector from "../helpers/additionVector";
 import type { Position, Vector, Color } from "../schemas";
 import type { ParticleSchema } from "../schemas";
 
@@ -111,8 +112,8 @@ export class Particle implements ParticleSchema {
     return this.lifetime / this.maxLifetime;
   }
 
-  setVelocity(x: number, y: number, z: number): void {
-    this.velocity = { x, y, z };
+  addVelocity(x: number, y: number, z: number): void {
+    this.velocity = additionVector(this.velocity, { x, y, z });
   }
 
   addForce(x: number, y: number, z: number): void {

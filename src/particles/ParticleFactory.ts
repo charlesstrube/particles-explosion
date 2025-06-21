@@ -12,7 +12,7 @@ export class FireParticleFactory implements ParticleFactorySchema {
   createParticle(x: number, y: number, z: number): ParticleSchema {
     const particle = new Particle(x, y, z);
     // Personnalisation pour des particules de feu
-    particle.setVelocity(0, -200, 0); // Mouvement vers le haut
+    particle.addVelocity(0, -500, 0); // Mouvement vers le haut
     return particle;
   }
 }
@@ -22,7 +22,7 @@ export class WaterParticleFactory implements ParticleFactorySchema {
   createParticle(x: number, y: number, z: number): ParticleSchema {
     const particle = new Particle(x, y, z);
     // Personnalisation pour des particules d'eau
-    particle.setVelocity(0, 200, 0); // Mouvement vers le bas
+    particle.addVelocity(0, 200, 0); // Mouvement vers le bas
     return particle;
   }
 } 

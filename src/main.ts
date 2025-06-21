@@ -19,10 +19,18 @@ const centerY = HEIGHT / 2
 const params = {
   amount: AMOUNT,
   fps: FPS,
-  camera: 90,
-  turbulenceForce: 10,
-  turbulenceRadius: 100,
-  turbulenceCount: 50,
+}
+const turbulenceParams = {
+  force: 10,
+  radius: 100,
+  count: 50,
+}
+const cameraParams = {
+  x: 90,
+  y: 90,
+  fov: 90,
+  near: 100,
+  far: 500,
 }
 
 let x = 0
@@ -33,10 +41,16 @@ if (app) {
   const canvas = document.createElement('canvas')
   app.appendChild(canvas)
 
-  const camera = new Camera(
-    { x: centerX, y: centerY, z: 300 },
-    { x: centerX, y: centerY, z: 0 },
 
+  const cameraPosition = { x: centerX, y: centerY, z: 500 }
+  const cameraTarget = { x: centerX, y: centerY, z: 0 }
+
+  const camera = new Camera(
+    cameraPosition,
+    cameraTarget,
+    cameraParams.fov,
+    cameraParams.near,
+    cameraParams.far
   )
   const turbulenceField = new TurbulenceField()
   const Particular = new ParticleEngine(turbulenceField)
@@ -45,9 +59,9 @@ if (app) {
   turbulenceField.createRandomPattern(
     centerX, centerY, 0,           // Centre
     300,                // Rayon de la zone
-    params.turbulenceCount, // Nombre de points
-    params.turbulenceForce, // Force
-    params.turbulenceRadius    // Rayon d'influence de chaque point
+    turbulenceParams.count, // Nombre de points
+    turbulenceParams.force, // Force
+    turbulenceParams.radius    // Rayon d'influence de chaque point
   )
 
   const Render = new RenderEngine(
@@ -103,42 +117,57 @@ if (app) {
   const gui = new GUI({
     name: 'Particular Explosion',
   })
-  gui.add(params, 'amount', 1, 100000)
+  gui.add(params, 'amount', 1, 10000)
   gui.add(params, 'fps', 1, 120).onChange((value) => {
     Render.fps = value
   })
-  gui.add(params, 'camera', 0, 359).onChange((value) => {
+
+  const cameraFolder = gui.addFolder('Camera')
+  cameraFolder.add(cameraParams, 'x', 0, 359).onChange((value) => {
     camera.positionX = value
   })
-
+  cameraFolder.add(cameraParams, 'y', 0, 359).onChange((value) => {
+    camera.positionY = value
+  })
+  cameraFolder.add(cameraParams, 'fov', 0, 180).onChange((value) => {
+    camera.fov = value
+  })
+  cameraFolder.add(cameraParams, 'near', 0, 1000).onChange((value) => {
+    camera.near = value
+  })
+  cameraFolder.add(cameraParams, 'far', 0, 1000).onChange((value) => {
+    camera.far = value
+  })
+  cameraFolder.open()
   // Contrôles pour la turbulence
   const turbulenceFolder = gui.addFolder('Turbulence')
-  turbulenceFolder.add(params, 'turbulenceForce', 0, 50).onChange((value) => {
+  turbulenceFolder.open()
+  turbulenceFolder.add(turbulenceParams, 'force', 0, 50).onChange((value) => {
     // Recréer le champ avec les nouveaux paramètres
     turbulenceField.createRandomPattern(
       centerX, centerY, 0,
       300,
-      params.turbulenceCount,
+      turbulenceParams.count,
       value,
-      params.turbulenceRadius
+      turbulenceParams.radius
     )
   })
-  turbulenceFolder.add(params, 'turbulenceRadius', 10, 200).onChange((value) => {
+  turbulenceFolder.add(turbulenceParams, 'radius', 10, 200).onChange((value) => {
     turbulenceField.createRandomPattern(
       centerX, centerY, 0,
       300,
-      params.turbulenceCount,
-      params.turbulenceForce,
+      turbulenceParams.count,
+      turbulenceParams.force,
       value
     )
   })
-  turbulenceFolder.add(params, 'turbulenceCount', 10, 200).onChange((value) => {
+  turbulenceFolder.add(turbulenceParams, 'count', 10, 200).onChange((value) => {
     turbulenceField.createRandomPattern(
       centerX, centerY, 0,
       300,
       value,
-      params.turbulenceForce,
-      params.turbulenceRadius
+      turbulenceParams.force,
+      turbulenceParams.radius
     )
   })
 }

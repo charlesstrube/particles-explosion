@@ -1,8 +1,6 @@
 import { ContextGLManager } from "../../canvas/ContextGLManager";
-import { projectPoint } from "../../helpers/projectPoint";
 import { CircleShader, ShaderManager } from "../../shader";
 import type { CameraSchema, CanvasManagerSchema, ParticleRendererSchema, ParticleSchema } from "../../schemas";
-import { projectPointCamera } from "../../helpers/projectPointCamera";
 
 export class ParticleGLRenderer implements ParticleRendererSchema {
   private _shaderManager: ShaderManager;
@@ -55,10 +53,9 @@ export class ParticleGLRenderer implements ParticleRendererSchema {
   }
 
   projectParticle(particle: ParticleSchema) {
-    return projectPointCamera(
+    return this._camera.projectPointCamera(
       particle.position,
       particle.size,
-      this._camera,
       this.width,
       this.height
     );
