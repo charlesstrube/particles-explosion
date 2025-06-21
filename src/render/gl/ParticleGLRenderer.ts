@@ -1,10 +1,9 @@
-import { ContextGLManager } from "../canvas/ContextGLManager";
-import { projectPoint } from "../helpers/projectPoint";
-import { ShaderManager } from "../shader";
-import type { CanvasManagerSchema, ParticleRendererSchema, ContextManagerSchema, ParticleSchema } from "../schemas";
+import { ContextGLManager } from "../../canvas/ContextGLManager";
+import { projectPoint } from "../../helpers/projectPoint";
+import { CircleShader, ShaderManager } from "../../shader";
+import type { CanvasManagerSchema, ParticleRendererSchema, ParticleSchema } from "../../schemas";
 
 export class ParticleGLRenderer implements ParticleRendererSchema {
-  private _contextManager: ContextManagerSchema<WebGLRenderingContext>;
   private _shaderManager: ShaderManager;
   private _positionBuffer: WebGLBuffer | null = null;
   private _colorBuffer: WebGLBuffer | null = null;
@@ -20,9 +19,9 @@ export class ParticleGLRenderer implements ParticleRendererSchema {
 
   constructor(
     private _canvasManager: CanvasManagerSchema,
+    private _contextManager: ContextGLManager,
     private _perspective: number
   ) {
-    this._contextManager = new ContextGLManager(this._canvasManager.canvas);
     this._shaderManager = new ShaderManager(this.context);
     this.initializeBuffers();
     this.initializeBatchBuffers();
@@ -78,7 +77,7 @@ export class ParticleGLRenderer implements ParticleRendererSchema {
     const { projectedX, projectedY, size } = this.projectParticle(particle);
 
     // Use the circle shader
-    const circleShader = this._shaderManager.useShader('circle');
+    const circleShader = this._shaderManager.useShader('circle') as CircleShader;
 
     // Set resolution
     circleShader.setResolution(this.width, this.height);
@@ -160,7 +159,7 @@ export class ParticleGLRenderer implements ParticleRendererSchema {
   drawParticlesBatch(particles: ParticleSchema[]): void {
     if (particles.length === 0) return;
 
-    const circleShader = this._shaderManager.useShader('circle');
+    const circleShader = this._shaderManager.useShader('circle') as CircleShader;
     circleShader.setResolution(this.width, this.height);
 
     // Enable blending once

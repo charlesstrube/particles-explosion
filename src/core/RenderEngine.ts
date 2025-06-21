@@ -1,17 +1,17 @@
 import { MouseHandler } from "../MouseHandler";
-import { Particle2dRenderer } from "../render/Particle2dRenderer";
+import { TurbulenceRenderer } from "../render/gl/TurbulenceGLRenderer";
 import { GameLoop } from "./GameLoop";
-import type { CanvasManagerSchema, ParticleSchema, ParticleRendererSchema } from "../schemas";
-import { ParticleGLRenderer } from "../render/ParticleGLRenderer";
+import type { CanvasManagerSchema, ParticleSchema, ParticleRendererSchema, TurbulencePoint } from "../schemas";
+import { ParticleGLRenderer } from "../render/gl/ParticleGLRenderer";
 import { CanvasManager } from "../canvas/CanvasManager";
-
-type ContextType = '2d' | 'gl';
-
+import { ContextGLManager } from "../canvas/ContextGLManager";
 export class RenderEngine {
   private mouseHandler: MouseHandler;
   private particleRenderer: ParticleRendererSchema;
+  private turbulenceRenderer: TurbulenceRenderer;
   private gameLoop: GameLoop;
   private canvasManager: CanvasManagerSchema;
+  private _contextManager: ContextGLManager;
 
   public onRender: ((elapsed: number) => ParticleSchema[]) | undefined;
   public onMouseDown: ((x: number, y: number) => void) | undefined;
@@ -20,26 +20,27 @@ export class RenderEngine {
 
   constructor(
     canvas: HTMLCanvasElement,
-    type: ContextType,
     width: number,
     height: number,
     fps: number = 60,
     perspective: number = 1000
   ) {
     this.canvasManager = new CanvasManager(canvas, width, height);
-    if (type === '2d') {
-      this.particleRenderer = new Particle2dRenderer(
-        this.canvasManager,
-        perspective
-      );
-    } else if (type === 'gl') {
-      this.particleRenderer = new ParticleGLRenderer(
-        this.canvasManager,
-        perspective
-      );
-    } else {
-      throw new Error('Invalid type');
-    }
+
+    this._contextManager = new ContextGLManager(this.canvasManager.canvas);
+
+    this.particleRenderer = new ParticleGLRenderer(
+      this.canvasManager,
+      this._contextManager,
+      perspective
+    );
+
+
+    this.turbulenceRenderer = new TurbulenceRenderer(
+      this.canvasManager,
+      this._contextManager,
+      perspective
+    );
 
     this.mouseHandler = new MouseHandler(canvas, {
       onMouseDown: (x, y) => this.onMouseDown?.(x, y),
@@ -49,22 +50,6 @@ export class RenderEngine {
 
     this.gameLoop = new GameLoop(fps, this.update.bind(this));
     this.setup();
-  }
-
-  switchContext(type: ContextType) {
-    if (type === '2d') {
-      this.particleRenderer = new Particle2dRenderer(
-        this.canvasManager,
-        this.perspective
-      );
-    } else if (type === 'gl') {
-      this.particleRenderer = new ParticleGLRenderer(
-        this.canvasManager,
-        this.perspective
-      );
-    } else {
-      throw new Error('Invalid type');
-    }
   }
 
   set fps(fps: number) {
@@ -77,6 +62,7 @@ export class RenderEngine {
 
   set perspective(perspective: number) {
     this.particleRenderer.perspective = perspective;
+    this.turbulenceRenderer.perspective = perspective;
   }
 
   private update(elapsed: number) {
@@ -84,11 +70,18 @@ export class RenderEngine {
       this.onMouseHold?.(this.mouseHandler.x, this.mouseHandler.y);
     }
 
-    const particles = this.onRender?.(elapsed);
-    if (!particles) return;
-
     this.particleRenderer.clear();
+    this.turbulenceRenderer.clear();
+
+    this.onRender?.(elapsed);
+  }
+
+  drawParticles(particles: ParticleSchema[]): void {
     this.particleRenderer.drawParticlesBatch(particles);
+  }
+
+  drawTurbulencePoints(points: TurbulencePoint[]): void {
+    this.turbulenceRenderer.drawTurbulencePoints(points);
   }
 
   set width(width: number) {

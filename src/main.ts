@@ -47,7 +47,6 @@ if (app) {
 
   const Render = new RenderEngine(
     canvas,
-    'gl',
     WIDTH,
     HEIGHT,
     FPS,
@@ -89,6 +88,12 @@ if (app) {
       Particular.spawnParticles(x, y, 0, params.amount)
       willSpawn = false
     }
+
+    // Dessiner les points de turbulence
+    Render.drawTurbulencePoints(turbulenceField.points)
+    // Dessiner les particules
+    Render.drawParticles(Particular.particles)
+
     return Particular.particles
   }
 

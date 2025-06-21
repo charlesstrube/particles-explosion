@@ -43,6 +43,12 @@ export interface ParticleRendererSchema {
   drawParticlesBatch(particles: ParticleSchema[]): void;
 }
 
+export interface TurbulenceRendererSchema {
+  drawTurbulencePoints(points: TurbulencePoint[]): void;
+  clear(): void;
+  set perspective(perspective: number);
+}
+
 export interface GameLoopSchema {
   start(): void;
   stop(): void;

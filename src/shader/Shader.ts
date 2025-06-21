@@ -10,11 +10,7 @@ export abstract class Shader {
 
   protected abstract getVertexShaderSource(): string;
   protected abstract getFragmentShaderSource(): string;
-  public abstract getColorLocation(): number;
-  public abstract getSizeLocation(): number;
-  public abstract getAlphaLocation(): number;
-  public abstract getPositionLocation(): number;
-  public abstract setResolution(width: number, height: number): void;
+
 
   compile(): boolean {
     // Créer et compiler le vertex shader
