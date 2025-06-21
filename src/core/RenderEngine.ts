@@ -13,7 +13,7 @@ export class RenderEngine {
   private canvasManager: CanvasManagerSchema;
   private _contextManager: ContextGLManager;
 
-  public onRender: ((elapsed: number) => ParticleSchema[]) | undefined;
+  public onRender: ((elapsed: number) => void) | undefined;
   public onMouseDown: ((x: number, y: number) => void) | undefined;
   public onMouseUp: ((x: number, y: number) => void) | undefined;
   public onMouseHold: ((x: number, y: number) => void) | undefined;

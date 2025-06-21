@@ -93,8 +93,6 @@ if (app) {
     Render.drawTurbulencePoints(turbulenceField.points)
     // Dessiner les particules
     Render.drawParticles(Particular.particles)
-
-    return Particular.particles
   }
 
   const gui = new GUI({
