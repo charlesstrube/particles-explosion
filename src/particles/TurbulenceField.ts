@@ -1,26 +1,13 @@
 import { getDistance } from "../helpers/getDistance";
 import getInfluence from "../helpers/getInfluence";
+import getMagnitude from "../helpers/getMagnitude";
 import type { TurbulenceFieldSchema, TurbulencePoint, Position, Vector } from "../schemas";
 
 export class TurbulenceField implements TurbulenceFieldSchema {
   private _points: TurbulencePoint[] = [];
 
   get points(): TurbulencePoint[] {
-    return [...this._points];
-  }
-
-  addPoint(point: TurbulencePoint): void {
-    this._points.push(point);
-  }
-
-  removePoint(index: number): void {
-    if (index >= 0 && index < this._points.length) {
-      this._points.splice(index, 1);
-    }
-  }
-
-  clear(): void {
-    this._points = [];
+    return this._points
   }
 
   getTurbulenceAt(position: Position): Vector {
@@ -49,52 +36,25 @@ export class TurbulenceField implements TurbulenceFieldSchema {
     // On pourrait ajouter ici de l'animation des points si nécessaire
   }
 
-  // Méthodes utilitaires pour créer des patterns de turbulence
-  createGridPattern(
-    centerX: number, centerY: number, centerZ: number,
-    width: number, height: number, depth: number,
-    spacing: number, force: number, radius: number
-  ): void {
-    for (let x = centerX - width / 2; x <= centerX + width / 2; x += spacing) {
-      for (let y = centerY - height / 2; y <= centerY + height / 2; y += spacing) {
-        for (let z = centerZ - depth / 2; z <= centerZ + depth / 2; z += spacing) {
-          const direction: Vector = {
-            x: (Math.random() - 0.5) * 2,
-            y: (Math.random() - 0.5) * 2,
-            z: (Math.random() - 0.5) * 2
-          };
-
-          // Normaliser et appliquer la force
-          const magnitude = Math.sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
-          if (magnitude > 0) {
-            direction.x = (direction.x / magnitude) * force;
-            direction.y = (direction.y / magnitude) * force;
-            direction.z = (direction.z / magnitude) * force;
-          }
-
-          this.addPoint({
-            position: { x, y, z },
-            direction,
-            radius
-          });
-        }
-      }
-    }
-  }
-
   createRandomPattern(
     centerX: number, centerY: number, centerZ: number,
-    radius: number, count: number, force: number, pointRadius: number
+    radius: number,
+    count: number,
+    force: number,
+    pointRadius: number
   ): void {
+    const points: TurbulencePoint[] = [];
     for (let i = 0; i < count; i++) {
       // Position aléatoire dans la sphère
       const angle1 = Math.random() * Math.PI * 2;
       const angle2 = Math.acos(2 * Math.random() - 1);
       const r = radius * Math.cbrt(Math.random()); // Distribution uniforme dans la sphère
 
-      const x = centerX + r * Math.sin(angle2) * Math.cos(angle1);
-      const y = centerY + r * Math.sin(angle2) * Math.sin(angle1);
-      const z = centerZ + r * Math.cos(angle2);
+      const position: Position = {
+        x: centerX + r * Math.sin(angle2) * Math.cos(angle1),
+        y: centerY + r * Math.sin(angle2) * Math.sin(angle1),
+        z: centerZ + r * Math.cos(angle2)
+      }
 
       const direction: Vector = {
         x: (Math.random() - 0.5) * 2,
@@ -103,46 +63,22 @@ export class TurbulenceField implements TurbulenceFieldSchema {
       };
 
       // Normaliser et appliquer la force
-      const magnitude = Math.sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
+      const magnitude = getMagnitude(direction);
       if (magnitude > 0) {
         direction.x = (direction.x / magnitude) * force;
         direction.y = (direction.y / magnitude) * force;
         direction.z = (direction.z / magnitude) * force;
       }
 
-      this.addPoint({
-        position: { x, y, z },
+      const point: TurbulencePoint = {
+        position,
         direction,
         radius: pointRadius
-      });
+      }
+
+      points.push(point);
     }
-  }
 
-  createVortexPattern(
-    centerX: number, centerY: number, centerZ: number,
-    radius: number, height: number, count: number, force: number, pointRadius: number
-  ): void {
-    for (let i = 0; i < count; i++) {
-      const angle = (i / count) * Math.PI * 2;
-      const r = radius * (0.3 + 0.7 * Math.random()); // Rayon variable
-      const h = (Math.random() - 0.5) * height;
-
-      const x = centerX + r * Math.cos(angle);
-      const y = centerY + h;
-      const z = centerZ + r * Math.sin(angle);
-
-      // Direction tangentielle pour créer un vortex avec la force appliquée
-      const direction: Vector = {
-        x: -Math.sin(angle) * force,
-        y: 0,
-        z: Math.cos(angle) * force
-      };
-
-      this.addPoint({
-        position: { x, y, z },
-        direction,
-        radius: pointRadius
-      });
-    }
+    this._points = points;
   }
 } 

@@ -110,7 +110,6 @@ if (app) {
   const turbulenceFolder = gui.addFolder('Turbulence')
   turbulenceFolder.add(params, 'turbulenceForce', 0, 50).onChange((value) => {
     // Recréer le champ avec les nouveaux paramètres
-    turbulenceField.clear()
     turbulenceField.createRandomPattern(
       centerX, centerY, 0,
       300,
@@ -120,7 +119,6 @@ if (app) {
     )
   })
   turbulenceFolder.add(params, 'turbulenceRadius', 10, 200).onChange((value) => {
-    turbulenceField.clear()
     turbulenceField.createRandomPattern(
       centerX, centerY, 0,
       300,
@@ -130,7 +128,6 @@ if (app) {
     )
   })
   turbulenceFolder.add(params, 'turbulenceCount', 10, 200).onChange((value) => {
-    turbulenceField.clear()
     turbulenceField.createRandomPattern(
       centerX, centerY, 0,
       300,

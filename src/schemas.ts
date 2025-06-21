@@ -24,10 +24,11 @@ export interface TurbulencePoint {
 
 export interface TurbulenceFieldSchema {
   readonly points: TurbulencePoint[];
-  addPoint(point: TurbulencePoint): void;
-  removePoint(index: number): void;
-  clear(): void;
   getTurbulenceAt(position: Position): Vector;
+  createRandomPattern(
+    centerX: number, centerY: number, centerZ: number,
+    radius: number, count: number, force: number, pointRadius: number
+  ): void;
 }
 
 export interface MouseHandlerSchema {
