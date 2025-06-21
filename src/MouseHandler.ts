@@ -1,4 +1,4 @@
-import type { MouseHandlerSchema } from "./interfaces";
+import type { MouseHandlerSchema } from "./schemas";
 
 export class MouseHandler implements MouseHandlerSchema {
   private _holding: boolean = false;

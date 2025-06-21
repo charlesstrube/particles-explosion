@@ -1,9 +1,9 @@
-import type { ContextManagerSchema } from "../interfaces";
+import type { ContextManagerSchema } from "../schemas";
 
 export class Context2dManager implements ContextManagerSchema<CanvasRenderingContext2D> {
   private _context: CanvasRenderingContext2D;
   private _ratio: number = window.devicePixelRatio;
-  
+
   constructor(
     protected canvas: HTMLCanvasElement,
   ) {

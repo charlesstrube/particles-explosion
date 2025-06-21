@@ -1,4 +1,4 @@
-import type { ParticleSchema, ParticleFactorySchema } from "./interfaces";
+import type { ParticleSchema, ParticleFactorySchema } from "../schemas";
 import { Particle } from "./Particle";
 
 export class DefaultParticleFactory implements ParticleFactorySchema {

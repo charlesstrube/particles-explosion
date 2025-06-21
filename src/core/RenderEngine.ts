@@ -1,9 +1,9 @@
-import { MouseHandler } from "./MouseHandler";
-import { Particle2dRenderer } from "./Renderers/Particle2dRenderer";
+import { MouseHandler } from "../MouseHandler";
+import { Particle2dRenderer } from "../Renderers/Particle2dRenderer";
 import { GameLoop } from "./GameLoop";
-import type { CanvasManagerSchema, ParticleSchema, ParticleRendererSchema } from "./interfaces";
-import { ParticleGLRenderer } from "./Renderers/ParticleGLRenderer";
-import { CanvasManager } from "./CanvasManagers/CanvasManager";
+import type { CanvasManagerSchema, ParticleSchema, ParticleRendererSchema } from "../schemas";
+import { ParticleGLRenderer } from "../Renderers/ParticleGLRenderer";
+import { CanvasManager } from "../CanvasManagers/CanvasManager";
 
 type ContextType = '2d' | 'gl';
 
@@ -88,7 +88,7 @@ export class RenderEngine {
     if (!particles) return;
 
     this.particleRenderer.clear();
-    
+
     // Utiliser le rendu par lots si disponible, sinon le rendu individuel
     if ('drawParticlesBatch' in this.particleRenderer) {
       (this.particleRenderer as any).drawParticlesBatch(particles);

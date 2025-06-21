@@ -1,6 +1,6 @@
-import { ParticleEngine } from './ParticleEngine'
-import { RenderEngine } from './RenderEngine'
-import { DefaultParticleFactory, FireParticleFactory, WaterParticleFactory } from './ParticleFactory'
+import { RenderEngine } from './core/RenderEngine'
+import { ParticleEngine } from './particles/ParticleEngine';
+import { DefaultParticleFactory, FireParticleFactory, WaterParticleFactory } from './particles/ParticleFactory'
 import './style.css'
 
 import { GUI } from 'dat.gui';
@@ -10,7 +10,7 @@ const app = document.querySelector<HTMLDivElement>('#app')
 const WIDTH = window.innerWidth
 const HEIGHT = window.innerHeight
 const FPS = 60
-const AMOUNT = 100
+const AMOUNT = 2000
 const PERSPECTIVE = 400
 const params = {
   amount: AMOUNT,
@@ -32,8 +32,8 @@ if (app) {
   const Render = new RenderEngine(
     canvas,
     'gl',
-    WIDTH, 
-    HEIGHT, 
+    WIDTH,
+    HEIGHT,
     FPS,
     PERSPECTIVE
   )
@@ -82,7 +82,7 @@ if (app) {
   const gui = new GUI({
     name: 'Particular Explosion',
   })
-  gui.add(params, 'amount', 1, 10000)
+  gui.add(params, 'amount', 1, 100000)
   gui.add(params, 'fps', 1, 120).onChange((value) => {
     Render.fps = value
   })

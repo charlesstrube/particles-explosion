@@ -1,6 +1,6 @@
 import { Context2dManager } from "../CanvasManagers/Context2dManager";
 import { projectPoint } from "../helpers/projectPoint";
-import type { ParticleRendererSchema, ParticleSchema, CanvasManagerSchema, ContextManagerSchema } from "../interfaces";
+import type { ParticleRendererSchema, ParticleSchema, CanvasManagerSchema, ContextManagerSchema } from "../schemas";
 
 export class Particle2dRenderer implements ParticleRendererSchema {
   private _contextManager: ContextManagerSchema<CanvasRenderingContext2D>
@@ -19,11 +19,11 @@ export class Particle2dRenderer implements ParticleRendererSchema {
     return this._perspective;
   }
 
-  private get width () {
+  private get width() {
     return this._canvasManager.width
   }
 
-  private get height () {
+  private get height() {
     return this._canvasManager.height
   }
 
@@ -33,10 +33,10 @@ export class Particle2dRenderer implements ParticleRendererSchema {
 
   projectParticle(particle: ParticleSchema) {
     return projectPoint(
-      particle.position, 
-      particle.size, 
-      this._perspective, 
-      this.width, 
+      particle.position,
+      particle.size,
+      this._perspective,
+      this.width,
       this.height
     );
   }

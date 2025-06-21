@@ -1,5 +1,5 @@
-import type { Position, Velocity, Turbulence, Color } from "./interfaces";
-import type { ParticleSchema } from "./interfaces";
+import type { Position, Velocity, Turbulence, Color } from "../schemas";
+import type { ParticleSchema } from "../schemas";
 
 const RED_VARIANTS: Color[] = [
   { r: 255, g: 0, b: 0 },      // Rouge vif
@@ -45,7 +45,7 @@ export class Particle implements ParticleSchema {
     this.turbulencePhase = Math.random() * Math.PI;
     this.color = this.generateColor();
   }
-  
+
   get alpha(): number {
     return 1 - this.lifeTimePercentage();
   }
@@ -80,7 +80,7 @@ export class Particle implements ParticleSchema {
 
   private updateTurbulence(): void {
     const time = (this.lifetime * this.turbulenceFrequency) + this.turbulencePhase;
-    
+
     this.turbulence = {
       x: (Math.sin(time) + Math.sin(time * 1.7)) * this.turbulenceStrength,
       y: (Math.sin(time * 1.3) + Math.sin(time * 2.1)) * this.turbulenceStrength,
@@ -102,7 +102,7 @@ export class Particle implements ParticleSchema {
 
     const dragForce = this.airResistance * speed * speed;
     const reductionFactor = 1 - (dragForce * deltaTime / 1000);
-    
+
     this.velocity.x *= reductionFactor;
     this.velocity.y *= reductionFactor;
     this.velocity.z *= reductionFactor;
@@ -110,7 +110,7 @@ export class Particle implements ParticleSchema {
 
   update(deltaTime: number): void {
     this.updateTurbulence();
-    
+
     this.velocity.x += this.turbulence.x;
     this.velocity.y += this.turbulence.y;
     this.velocity.z += this.turbulence.z;
@@ -120,7 +120,7 @@ export class Particle implements ParticleSchema {
     this.position.x += this.velocity.x * (deltaTime / 1000);
     this.position.y += this.velocity.y * (deltaTime / 1000);
     this.position.z += this.velocity.z * (deltaTime / 1000);
-    
+
     this.lifetime += deltaTime;
   }
 

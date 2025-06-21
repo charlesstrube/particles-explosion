@@ -1,4 +1,4 @@
-import type { ContextManagerSchema } from "../interfaces";
+import type { ContextManagerSchema } from "../schemas";
 
 export class ContextGLManager implements ContextManagerSchema<WebGLRenderingContext> {
   protected _context: WebGLRenderingContext;

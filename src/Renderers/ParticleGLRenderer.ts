@@ -1,7 +1,7 @@
 import { ContextGLManager } from "../CanvasManagers/ContextGLManager";
 import { projectPoint } from "../helpers/projectPoint";
 import { ShaderManager } from "../Shaders";
-import type { CanvasManagerSchema, ParticleRendererSchema, ContextManagerSchema, ParticleSchema } from "../interfaces";
+import type { CanvasManagerSchema, ParticleRendererSchema, ContextManagerSchema, ParticleSchema } from "../schemas";
 
 export class ParticleGLRenderer implements ParticleRendererSchema {
   private _contextManager: ContextManagerSchema<WebGLRenderingContext>;

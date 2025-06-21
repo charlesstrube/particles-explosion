@@ -1,4 +1,4 @@
-import type { GameLoopSchema } from "./interfaces";
+import type { GameLoopSchema } from "../schemas";
 
 export class GameLoop implements GameLoopSchema {
   private isRunning: boolean = false;

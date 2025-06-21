@@ -1,4 +1,4 @@
-import type { ParticleSchema, ParticleEngineSchema, ParticleFactorySchema } from "./interfaces"
+import type { ParticleSchema, ParticleEngineSchema, ParticleFactorySchema } from "../schemas"
 import { DefaultParticleFactory } from "./ParticleFactory"
 
 export class ParticleEngine implements ParticleEngineSchema {
@@ -27,7 +27,7 @@ export class ParticleEngine implements ParticleEngineSchema {
     for (let i = 0; i < amount; i++) {
       newParticles.push(this._particleFactory.createParticle(x, y, z))
     }
-    
+
     // Ajouter en lot pour éviter les reallocations multiples
     this._particles.push(...newParticles)
     this._needsSort = true
@@ -37,7 +37,7 @@ export class ParticleEngine implements ParticleEngineSchema {
     // Utiliser un filtre plus efficace
     const aliveParticles: ParticleSchema[] = []
     const currentTime = Date.now()
-    
+
     for (let i = 0; i < this._particles.length; i++) {
       const particle = this._particles[i]
       particle.update(deltaTime)
@@ -45,9 +45,9 @@ export class ParticleEngine implements ParticleEngineSchema {
         aliveParticles.push(particle)
       }
     }
-    
+
     this._particles = aliveParticles
-    
+
     // Trier seulement si nécessaire et si assez de temps s'est écoulé
     if (this._needsSort && (currentTime - this._lastSortTime) > this._sortInterval) {
       this.sortParticles()

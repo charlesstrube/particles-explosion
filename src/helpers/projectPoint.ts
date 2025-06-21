@@ -1,4 +1,4 @@
-import type { Position } from "../interfaces";
+import type { Position } from "../schemas";
 
 export const projectPoint = (
   position: Position,

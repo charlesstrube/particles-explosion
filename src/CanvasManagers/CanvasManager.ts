@@ -1,4 +1,4 @@
-import type { CanvasManagerSchema } from "../interfaces";
+import type { CanvasManagerSchema } from "../schemas";
 
 export class CanvasManager implements CanvasManagerSchema {
   protected _width: number = 0;
@@ -19,7 +19,7 @@ export class CanvasManager implements CanvasManagerSchema {
     this.canvas.width = width * this._ratio;
     this.canvas.style.width = `${width}px`;
   }
-  
+
   set height(height: number) {
     this._height = height;
     this.canvas.height = height * this._ratio;
