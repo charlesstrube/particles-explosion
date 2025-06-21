@@ -11,7 +11,7 @@ export class RenderEngine {
   private turbulenceRenderer: TurbulenceRenderer;
   private gameLoop: GameLoop;
   private canvasManager: CanvasManagerSchema;
-  private _contextManager: ContextGLManager;
+  private contextManager: ContextGLManager;
 
   public onRender: ((elapsed: number) => void) | undefined;
   public onMouseDown: ((x: number, y: number) => void) | undefined;
@@ -27,18 +27,18 @@ export class RenderEngine {
   ) {
     this.canvasManager = new CanvasManager(canvas, width, height);
 
-    this._contextManager = new ContextGLManager(this.canvasManager.canvas);
+    this.contextManager = new ContextGLManager(this.canvasManager.canvas);
 
     this.particleRenderer = new ParticleGLRenderer(
       this.canvasManager,
-      this._contextManager,
+      this.contextManager,
       perspective
     );
 
 
     this.turbulenceRenderer = new TurbulenceRenderer(
       this.canvasManager,
-      this._contextManager,
+      this.contextManager,
       perspective
     );
 

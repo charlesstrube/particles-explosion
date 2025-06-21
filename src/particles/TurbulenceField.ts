@@ -1,3 +1,5 @@
+import { getDistance } from "../helpers/getDistance";
+import getInfluence from "../helpers/getInfluence";
 import type { TurbulenceFieldSchema, TurbulencePoint, Position, Vector } from "../schemas";
 
 export class TurbulenceField implements TurbulenceFieldSchema {
@@ -22,16 +24,16 @@ export class TurbulenceField implements TurbulenceFieldSchema {
   }
 
   getTurbulenceAt(position: Position): Vector {
-    let totalTurbulence: Vector = { x: 0, y: 0, z: 0 };
+    const totalTurbulence: Vector = { x: 0, y: 0, z: 0 };
 
     for (const point of this._points) {
-      const distance = this.calculateDistance(position, point.position);
+      const distance = getDistance(position, point.position);
 
       // Ignorer les points trop éloignés pour les performances
       if (distance > point.radius) continue;
 
       // Calculer l'influence avec une fonction gaussienne
-      const influence = this.calculateInfluence(distance, point.radius);
+      const influence = getInfluence(distance, point.radius);
 
       // Appliquer la direction du point avec l'influence
       totalTurbulence.x += point.direction.x * influence;
@@ -40,19 +42,6 @@ export class TurbulenceField implements TurbulenceFieldSchema {
     }
 
     return totalTurbulence;
-  }
-
-  private calculateDistance(pos1: Position, pos2: Position): number {
-    const dx = pos1.x - pos2.x;
-    const dy = pos1.y - pos2.y;
-    const dz = pos1.z - pos2.z;
-    return Math.sqrt(dx * dx + dy * dy + dz * dz);
-  }
-
-  private calculateInfluence(distance: number, radius: number): number {
-    // Fonction gaussienne pour une décroissance naturelle
-    const normalizedDistance = distance / radius;
-    return Math.exp(-normalizedDistance * normalizedDistance / 2);
   }
 
   update(deltaTime: number): void {
