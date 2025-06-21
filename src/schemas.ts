@@ -16,6 +16,14 @@ export interface Color {
   b: number;
 }
 
+export interface CameraSchema {
+  get position(): Position;
+  get target(): Position;
+  get fov(): number;
+  get near(): number;
+  get far(): number;
+}
+
 export interface TurbulencePoint {
   readonly position: Position;
   readonly direction: Vector;
@@ -40,14 +48,12 @@ export interface MouseHandlerSchema {
 export interface ParticleRendererSchema {
   drawParticle(particle: ParticleSchema): void;
   clear(): void;
-  set perspective(perspective: number);
   drawParticlesBatch(particles: ParticleSchema[]): void;
 }
 
 export interface TurbulenceRendererSchema {
   drawTurbulencePoints(points: TurbulencePoint[]): void;
   clear(): void;
-  set perspective(perspective: number);
 }
 
 export interface GameLoopSchema {

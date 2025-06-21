@@ -1,7 +1,7 @@
 import { MouseHandler } from "../MouseHandler";
 import { TurbulenceRenderer } from "../render/gl/TurbulenceGLRenderer";
 import { GameLoop } from "./GameLoop";
-import type { CanvasManagerSchema, ParticleSchema, ParticleRendererSchema, TurbulencePoint } from "../schemas";
+import type { CanvasManagerSchema, ParticleSchema, ParticleRendererSchema, TurbulencePoint, CameraSchema } from "../schemas";
 import { ParticleGLRenderer } from "../render/gl/ParticleGLRenderer";
 import { CanvasManager } from "../canvas/CanvasManager";
 import { ContextGLManager } from "../canvas/ContextGLManager";
@@ -23,7 +23,7 @@ export class RenderEngine {
     width: number,
     height: number,
     fps: number = 60,
-    perspective: number = 1000
+    protected camera: CameraSchema
   ) {
     this.canvasManager = new CanvasManager(canvas, width, height);
 
@@ -32,14 +32,14 @@ export class RenderEngine {
     this.particleRenderer = new ParticleGLRenderer(
       this.canvasManager,
       this.contextManager,
-      perspective
+      camera
     );
 
 
     this.turbulenceRenderer = new TurbulenceRenderer(
       this.canvasManager,
       this.contextManager,
-      perspective
+      camera
     );
 
     this.mouseHandler = new MouseHandler(canvas, {
@@ -58,11 +58,6 @@ export class RenderEngine {
 
   private setup() {
     this.gameLoop.start();
-  }
-
-  set perspective(perspective: number) {
-    this.particleRenderer.perspective = perspective;
-    this.turbulenceRenderer.perspective = perspective;
   }
 
   private update(elapsed: number) {

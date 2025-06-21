@@ -1,6 +1,6 @@
-import { Context2dManager } from "../canvas/Context2dManager";
-import { projectPoint } from "../helpers/projectPoint";
-import type { ParticleRendererSchema, ParticleSchema, CanvasManagerSchema, ContextManagerSchema } from "../schemas";
+import { Context2dManager } from "../../canvas/Context2dManager";
+import { projectPoint } from "../../helpers/projectPoint";
+import type { ParticleRendererSchema, ParticleSchema, CanvasManagerSchema, ContextManagerSchema } from "../../schemas";
 
 export class Particle2dRenderer implements ParticleRendererSchema {
   private _contextManager: ContextManagerSchema<CanvasRenderingContext2D>

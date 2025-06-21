@@ -1,3 +1,4 @@
+import { Camera } from './core/Camera';
 import { RenderEngine } from './core/RenderEngine'
 import { ParticleEngine } from './particles/ParticleEngine';
 import { DefaultParticleFactory, FireParticleFactory, WaterParticleFactory } from './particles/ParticleFactory'
@@ -13,13 +14,12 @@ const WIDTH = window.innerWidth
 const HEIGHT = window.innerHeight
 const FPS = 60
 const AMOUNT = 2000
-const PERSPECTIVE = 400
 const centerX = WIDTH / 2
 const centerY = HEIGHT / 2
 const params = {
   amount: AMOUNT,
   fps: FPS,
-  perspective: PERSPECTIVE,
+  camera: 90,
   turbulenceForce: 10,
   turbulenceRadius: 100,
   turbulenceCount: 50,
@@ -33,6 +33,11 @@ if (app) {
   const canvas = document.createElement('canvas')
   app.appendChild(canvas)
 
+  const camera = new Camera(
+    { x: centerX, y: centerY, z: 300 },
+    { x: centerX, y: centerY, z: 0 },
+
+  )
   const turbulenceField = new TurbulenceField()
   const Particular = new ParticleEngine(turbulenceField)
 
@@ -50,7 +55,7 @@ if (app) {
     WIDTH,
     HEIGHT,
     FPS,
-    PERSPECTIVE
+    camera
   )
 
   // Création des boutons pour changer le type de particules
@@ -102,8 +107,8 @@ if (app) {
   gui.add(params, 'fps', 1, 120).onChange((value) => {
     Render.fps = value
   })
-  gui.add(params, 'perspective', 100, 1000).onChange((value) => {
-    Render.perspective = value
+  gui.add(params, 'camera', 0, 359).onChange((value) => {
+    camera.positionX = value
   })
 
   // Contrôles pour la turbulence
