@@ -21,7 +21,7 @@ export interface Color {
   g: number;
   b: number;
 }
- 
+
 
 export interface MouseHandlerSchema {
   readonly isHolding: boolean;
@@ -33,6 +33,7 @@ export interface ParticleRendererSchema {
   drawParticle(particle: ParticleSchema): void;
   clear(): void;
   set perspective(perspective: number);
+  drawParticlesBatch(particles: ParticleSchema[]): void;
 }
 
 export interface GameLoopSchema {

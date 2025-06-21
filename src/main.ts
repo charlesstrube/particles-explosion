@@ -1,6 +1,7 @@
 import { RenderEngine } from './core/RenderEngine'
 import { ParticleEngine } from './particles/ParticleEngine';
 import { DefaultParticleFactory, FireParticleFactory, WaterParticleFactory } from './particles/ParticleFactory'
+import type { ParticleFactorySchema } from './schemas';
 import './style.css'
 
 import { GUI } from 'dat.gui';
@@ -42,7 +43,7 @@ if (app) {
 
 
   // Création des boutons pour changer le type de particules
-  const createButton = (text: string, factory: any) => {
+  const createButton = (text: string, factory: ParticleFactorySchema) => {
     const button = document.createElement('button')
     button.textContent = text
     button.style.margin = '5px'

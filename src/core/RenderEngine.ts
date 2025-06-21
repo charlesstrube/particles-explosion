@@ -88,13 +88,7 @@ export class RenderEngine {
     if (!particles) return;
 
     this.particleRenderer.clear();
-
-    // Utiliser le rendu par lots si disponible, sinon le rendu individuel
-    if ('drawParticlesBatch' in this.particleRenderer) {
-      (this.particleRenderer as any).drawParticlesBatch(particles);
-    } else {
-      particles.forEach(particle => this.particleRenderer.drawParticle(particle));
-    }
+    this.particleRenderer.drawParticlesBatch(particles);
   }
 
   set width(width: number) {

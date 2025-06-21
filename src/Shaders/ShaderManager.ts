@@ -1,7 +1,7 @@
 import { CircleShader } from './CircleShader';
 
 export class ShaderManager {
-  private shaders: Map<string, any> = new Map();
+  private shaders: Map<string, CircleShader> = new Map();
   private gl: WebGLRenderingContext;
 
   constructor(gl: WebGLRenderingContext) {
@@ -15,7 +15,7 @@ export class ShaderManager {
     this.shaders.set('circle', circleShader);
   }
 
-  getShader(name: string): any {
+  getShader(name: string): CircleShader {
     const shader = this.shaders.get(name);
     if (!shader) {
       throw new Error(`Shader '${name}' non trouvé`);
@@ -23,7 +23,7 @@ export class ShaderManager {
     return shader;
   }
 
-  useShader(name: string): any {
+  useShader(name: string): CircleShader {
     const shader = this.getShader(name);
     shader.use();
     return shader;

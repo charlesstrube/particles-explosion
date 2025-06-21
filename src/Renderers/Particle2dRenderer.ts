@@ -31,6 +31,10 @@ export class Particle2dRenderer implements ParticleRendererSchema {
     return this._contextManager.context
   }
 
+  drawParticlesBatch(particles: ParticleSchema[]) {
+    particles.forEach(particle => this.drawParticle(particle));
+  }
+
   projectParticle(particle: ParticleSchema) {
     return projectPoint(
       particle.position,
