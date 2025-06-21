@@ -1,4 +1,4 @@
-import type { ParticleSchema, ParticleEngineSchema, ParticleFactorySchema } from "../schemas"
+import type { ParticleSchema, ParticleEngineSchema, ParticleFactorySchema, TurbulenceFieldSchema } from "../schemas"
 import { DefaultParticleFactory } from "./ParticleFactory"
 
 export class ParticleEngine implements ParticleEngineSchema {
@@ -9,7 +9,9 @@ export class ParticleEngine implements ParticleEngineSchema {
   private _sortInterval: number = 100 // Trier seulement toutes les 100ms
   private _needsSort: boolean = false
 
-  constructor() {
+  constructor(
+    private _turbulenceField: TurbulenceFieldSchema
+  ) {
     this._particleFactory = new DefaultParticleFactory()
   }
 
@@ -40,6 +42,11 @@ export class ParticleEngine implements ParticleEngineSchema {
 
     for (let i = 0; i < this._particles.length; i++) {
       const particle = this._particles[i]
+
+      // Appliquer la turbulence externe si disponible
+      const turbulence = this._turbulenceField.getTurbulenceAt(particle.position)
+      particle.applyTurbulence(turbulence)
+
       particle.update(deltaTime)
       if (particle.isAlive()) {
         aliveParticles.push(particle)

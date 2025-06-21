@@ -1,4 +1,4 @@
-import type { Position, Velocity, Turbulence, Color } from "../schemas";
+import type { Position, Vector, Color } from "../schemas";
 import type { ParticleSchema } from "../schemas";
 
 const RED_VARIANTS: Color[] = [
@@ -13,10 +13,6 @@ const DEFAULT_CONFIG = {
   SIZE: 3,
   MAX_LIFETIME: 4000,
   LIFETIME_VARIATION: 2000,
-  TURBULENCE_STRENGTH: 5,
-  TURBULENCE_STRENGTH_VARIATION: 0.1,
-  TURBULENCE_FREQUENCY: 0.5,
-  TURBULENCE_FREQUENCY_VARIATION: 0.5,
   AIR_RESISTANCE: 0.00008,
   RED_PARTICLE_CHANCE: 0.3,
   INITIAL_FORCE: 200
@@ -26,23 +22,15 @@ export class Particle implements ParticleSchema {
   private readonly _size: number = DEFAULT_CONFIG.SIZE;
   private lifetime: number = 0;
   private readonly maxLifetime: number;
-  private velocity: Velocity;
+  private velocity: Vector;
   readonly position: Position;
-  private turbulence: Turbulence;
-  private readonly turbulenceStrength: number;
-  private readonly turbulenceFrequency: number;
-  private readonly turbulencePhase: number;
   private readonly airResistance: number = DEFAULT_CONFIG.AIR_RESISTANCE;
   readonly color: Color;
 
   constructor(x: number, y: number, z: number) {
     this.position = { x, y, z };
     this.velocity = this.normalizeVelocity(DEFAULT_CONFIG.INITIAL_FORCE);
-    this.turbulence = { x: 0, y: 0, z: 0 };
     this.maxLifetime = DEFAULT_CONFIG.MAX_LIFETIME + (Math.random() - 0.5) * DEFAULT_CONFIG.LIFETIME_VARIATION;
-    this.turbulenceStrength = DEFAULT_CONFIG.TURBULENCE_STRENGTH + Math.random() * DEFAULT_CONFIG.TURBULENCE_STRENGTH_VARIATION;
-    this.turbulenceFrequency = DEFAULT_CONFIG.TURBULENCE_FREQUENCY + Math.random() * DEFAULT_CONFIG.TURBULENCE_FREQUENCY_VARIATION;
-    this.turbulencePhase = Math.random() * Math.PI;
     this.color = this.generateColor();
   }
 
@@ -61,7 +49,7 @@ export class Particle implements ParticleSchema {
     return { r: 255, g: 255, b: 255 };
   }
 
-  private normalizeVelocity(force: number): Velocity {
+  private normalizeVelocity(force: number): Vector {
     const x = (Math.random() - 0.5) * 2;
     const y = (Math.random() - 0.5) * 2;
     const z = (Math.random() - 0.5) * 2;
@@ -75,16 +63,6 @@ export class Particle implements ParticleSchema {
       x: (x / magnitude) * force,
       y: (y / magnitude) * force,
       z: (z / magnitude) * force
-    };
-  }
-
-  private updateTurbulence(): void {
-    const time = (this.lifetime * this.turbulenceFrequency) + this.turbulencePhase;
-
-    this.turbulence = {
-      x: (Math.sin(time) + Math.sin(time * 1.7)) * this.turbulenceStrength,
-      y: (Math.sin(time * 1.3) + Math.sin(time * 2.1)) * this.turbulenceStrength,
-      z: (Math.sin(time * 1.1) + Math.sin(time * 1.9)) * this.turbulenceStrength
     };
   }
 
@@ -109,12 +87,6 @@ export class Particle implements ParticleSchema {
   }
 
   update(deltaTime: number): void {
-    this.updateTurbulence();
-
-    this.velocity.x += this.turbulence.x;
-    this.velocity.y += this.turbulence.y;
-    this.velocity.z += this.turbulence.z;
-
     this.applyAirResistance(deltaTime);
 
     this.position.x += this.velocity.x * (deltaTime / 1000);
@@ -122,6 +94,13 @@ export class Particle implements ParticleSchema {
     this.position.z += this.velocity.z * (deltaTime / 1000);
 
     this.lifetime += deltaTime;
+  }
+
+  // Nouvelle méthode pour appliquer la turbulence externe
+  applyTurbulence(turbulence: Vector): void {
+    this.velocity.x += turbulence.x;
+    this.velocity.y += turbulence.y;
+    this.velocity.z += turbulence.z;
   }
 
   isAlive(): boolean {

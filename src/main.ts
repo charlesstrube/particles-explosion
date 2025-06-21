@@ -1,6 +1,7 @@
 import { RenderEngine } from './core/RenderEngine'
 import { ParticleEngine } from './particles/ParticleEngine';
 import { DefaultParticleFactory, FireParticleFactory, WaterParticleFactory } from './particles/ParticleFactory'
+import { TurbulenceField } from './particles/TurbulenceField'
 import type { ParticleFactorySchema } from './schemas';
 import './style.css'
 
@@ -13,10 +14,15 @@ const HEIGHT = window.innerHeight
 const FPS = 60
 const AMOUNT = 2000
 const PERSPECTIVE = 400
+const centerX = WIDTH / 2
+const centerY = HEIGHT / 2
 const params = {
   amount: AMOUNT,
   fps: FPS,
   perspective: PERSPECTIVE,
+  turbulenceForce: 10,
+  turbulenceRadius: 100,
+  turbulenceCount: 50,
 }
 
 let x = 0
@@ -27,9 +33,18 @@ if (app) {
   const canvas = document.createElement('canvas')
   app.appendChild(canvas)
 
+  const turbulenceField = new TurbulenceField()
+  const Particular = new ParticleEngine(turbulenceField)
 
+  // Configuration initiale du champ de turbulence
+  turbulenceField.createRandomPattern(
+    centerX, centerY, 0,           // Centre
+    300,                // Rayon de la zone
+    params.turbulenceCount, // Nombre de points
+    params.turbulenceForce, // Force
+    params.turbulenceRadius    // Rayon d'influence de chaque point
+  )
 
-  const Particular = new ParticleEngine()
   const Render = new RenderEngine(
     canvas,
     'gl',
@@ -38,9 +53,6 @@ if (app) {
     FPS,
     PERSPECTIVE
   )
-
-
-
 
   // Création des boutons pour changer le type de particules
   const createButton = (text: string, factory: ParticleFactorySchema) => {
@@ -89,5 +101,39 @@ if (app) {
   })
   gui.add(params, 'perspective', 100, 1000).onChange((value) => {
     Render.perspective = value
+  })
+
+  // Contrôles pour la turbulence
+  const turbulenceFolder = gui.addFolder('Turbulence')
+  turbulenceFolder.add(params, 'turbulenceForce', 0, 50).onChange((value) => {
+    // Recréer le champ avec les nouveaux paramètres
+    turbulenceField.clear()
+    turbulenceField.createRandomPattern(
+      centerX, centerY, 0,
+      300,
+      params.turbulenceCount,
+      value,
+      params.turbulenceRadius
+    )
+  })
+  turbulenceFolder.add(params, 'turbulenceRadius', 10, 200).onChange((value) => {
+    turbulenceField.clear()
+    turbulenceField.createRandomPattern(
+      centerX, centerY, 0,
+      300,
+      params.turbulenceCount,
+      params.turbulenceForce,
+      value
+    )
+  })
+  turbulenceFolder.add(params, 'turbulenceCount', 10, 200).onChange((value) => {
+    turbulenceField.clear()
+    turbulenceField.createRandomPattern(
+      centerX, centerY, 0,
+      300,
+      value,
+      params.turbulenceForce,
+      params.turbulenceRadius
+    )
   })
 }

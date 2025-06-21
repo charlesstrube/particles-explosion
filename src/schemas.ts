@@ -4,13 +4,7 @@ export interface Position {
   z: number;
 }
 
-export interface Velocity {
-  x: number;
-  y: number;
-  z: number;
-}
-
-export interface Turbulence {
+export interface Vector {
   x: number;
   y: number;
   z: number;
@@ -22,6 +16,19 @@ export interface Color {
   b: number;
 }
 
+export interface TurbulencePoint {
+  readonly position: Position;
+  readonly direction: Vector;
+  readonly radius: number;
+}
+
+export interface TurbulenceFieldSchema {
+  readonly points: TurbulencePoint[];
+  addPoint(point: TurbulencePoint): void;
+  removePoint(index: number): void;
+  clear(): void;
+  getTurbulenceAt(position: Position): Vector;
+}
 
 export interface MouseHandlerSchema {
   readonly isHolding: boolean;
@@ -63,6 +70,7 @@ export interface ParticleSchema {
   isAlive(): boolean;
   setVelocity(x: number, y: number, z: number): void;
   addForce(x: number, y: number, z: number): void;
+  applyTurbulence(turbulence: Vector): void;
 }
 
 export interface ParticleFactorySchema {
