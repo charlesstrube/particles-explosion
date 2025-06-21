@@ -1,4 +1,4 @@
-import { Context2dManager } from "../CanvasManagers/Context2dManager";
+import { Context2dManager } from "../canvas/Context2dManager";
 import { projectPoint } from "../helpers/projectPoint";
 import type { ParticleRendererSchema, ParticleSchema, CanvasManagerSchema, ContextManagerSchema } from "../schemas";
 

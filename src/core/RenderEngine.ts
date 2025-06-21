@@ -1,9 +1,9 @@
 import { MouseHandler } from "../MouseHandler";
-import { Particle2dRenderer } from "../Renderers/Particle2dRenderer";
+import { Particle2dRenderer } from "../render/Particle2dRenderer";
 import { GameLoop } from "./GameLoop";
 import type { CanvasManagerSchema, ParticleSchema, ParticleRendererSchema } from "../schemas";
-import { ParticleGLRenderer } from "../Renderers/ParticleGLRenderer";
-import { CanvasManager } from "../CanvasManagers/CanvasManager";
+import { ParticleGLRenderer } from "../render/ParticleGLRenderer";
+import { CanvasManager } from "../canvas/CanvasManager";
 
 type ContextType = '2d' | 'gl';
 

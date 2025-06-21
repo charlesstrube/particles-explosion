@@ -1,6 +1,6 @@
-import { ContextGLManager } from "../CanvasManagers/ContextGLManager";
+import { ContextGLManager } from "../canvas/ContextGLManager";
 import { projectPoint } from "../helpers/projectPoint";
-import { ShaderManager } from "../Shaders";
+import { ShaderManager } from "../shader";
 import type { CanvasManagerSchema, ParticleRendererSchema, ContextManagerSchema, ParticleSchema } from "../schemas";
 
 export class ParticleGLRenderer implements ParticleRendererSchema {
@@ -80,9 +80,8 @@ export class ParticleGLRenderer implements ParticleRendererSchema {
     // Use the circle shader
     const circleShader = this._shaderManager.useShader('circle');
 
-    // Set resolution and alpha
+    // Set resolution
     circleShader.setResolution(this.width, this.height);
-    circleShader.setAlpha(particle.alpha);
 
     // Prepare data for a single point
     const positions = new Float32Array([projectedX, projectedY]);
@@ -92,6 +91,7 @@ export class ParticleGLRenderer implements ParticleRendererSchema {
       particle.color.b / 255
     ]);
     const sizes = new Float32Array([size]);
+    const alphas = new Float32Array([particle.alpha]);
 
     // Configure attributes
     this.context.enableVertexAttribArray(circleShader.getPositionLocation());
@@ -130,6 +130,18 @@ export class ParticleGLRenderer implements ParticleRendererSchema {
       0
     );
 
+    this.context.enableVertexAttribArray(circleShader.getAlphaLocation());
+    this.context.bindBuffer(this.context.ARRAY_BUFFER, this._alphaBuffer);
+    this.context.bufferData(this.context.ARRAY_BUFFER, alphas, this.context.STATIC_DRAW);
+    this.context.vertexAttribPointer(
+      circleShader.getAlphaLocation(),
+      1,
+      this.context.FLOAT,
+      false,
+      0,
+      0
+    );
+
     // Enable blending for transparency
     this.context.enable(this.context.BLEND);
     this.context.blendFunc(this.context.SRC_ALPHA, this.context.ONE_MINUS_SRC_ALPHA);
@@ -141,6 +153,7 @@ export class ParticleGLRenderer implements ParticleRendererSchema {
     this.context.disableVertexAttribArray(circleShader.getPositionLocation());
     this.context.disableVertexAttribArray(circleShader.getColorLocation());
     this.context.disableVertexAttribArray(circleShader.getSizeLocation());
+    this.context.disableVertexAttribArray(circleShader.getAlphaLocation());
   }
 
   // New method for batch rendering
