@@ -115,7 +115,7 @@ if (app) {
   }
 
   const gui = new GUI({
-    name: 'Particular Explosion',
+    name: 'WebGL Particular',
   })
   gui.add(params, 'amount', 1, 10000)
   gui.add(params, 'fps', 1, 120).onChange((value) => {
